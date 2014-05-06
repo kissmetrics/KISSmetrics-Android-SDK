@@ -20,10 +20,9 @@ package com.kissmetrics.sdk;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
+import android.os.Build;
 import android.util.Log;
 
 
@@ -75,21 +74,19 @@ public class ConnectionImpl implements Connection {
 			connection = createHttpURLConnection(url);
 			connection.setUseCaches(false);
 			connection.setRequestMethod("GET");
+			connection.setConnectTimeout(CONNECTION_TIMEOUT*1000);
 			connection.setRequestProperty("User-Agent", "KISSmetrics-Android/2.0");
 			// TODO: Apply any easily obtainable device/OS info to the user agent value 
 			
-			connection.setConnectTimeout(CONNECTION_TIMEOUT*1000);
+			// addressing java.io.EOFException
+			connection.setRequestProperty("Connection", "close");
+			if (Build.VERSION.SDK != null && Build.VERSION.SDK_INT > 13) { 
+				connection.setRequestProperty("Connection", "close"); 
+			}
 			
 			responseCode = connection.getResponseCode();
 			connection.connect();
 			
-		} catch (MalformedURLException e) {
-			Log.w("KISSmetricsAPI", "Connection URL was malformed: " + e);
-	        malformed = true;
-		} catch (ProtocolException e) {
-			Log.w("KISSmetricsAPI", "Connection experienced a ProtocolException: " + e);
-	    } catch (IOException e) {
-	    	Log.w("KISSmetricsAPI", "Connection experienced an IOException: " + e);
 		} catch (Exception e) {
 			Log.w("KISSmetricsAPI", "Connection experienced an Exception: " + e);
 		} finally {
