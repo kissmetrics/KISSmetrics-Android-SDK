@@ -93,7 +93,6 @@ class VerificationImpl {
 				connection.setRequestProperty("User-Agent", "KISSmetrics-Android/2.0");
 				
 				// addressing java.io.EOFException
-				connection.setRequestProperty("Connection", "close");
 				if (Build.VERSION.SDK != null && Build.VERSION.SDK_INT > 13) { 
 					connection.setRequestProperty("Connection", "close"); 
 				}
