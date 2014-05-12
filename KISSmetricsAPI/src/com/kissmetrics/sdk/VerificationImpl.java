@@ -22,13 +22,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Build;
 import android.util.Log;
 
 
@@ -76,7 +74,7 @@ class VerificationImpl {
 			URL url = null;
 			connection = null;
 		
-			long currentTime = System.currentTimeMillis();;
+			long currentTime = System.currentTimeMillis();
 		
 			boolean success = false;
 			long expirationDate = 0;
@@ -93,6 +91,11 @@ class VerificationImpl {
 				connection.setRequestMethod("GET");
 				connection.setConnectTimeout(CONNECTION_TIMEOUT * 1000);
 				connection.setRequestProperty("User-Agent", "KISSmetrics-Android/2.0");
+				
+				// addressing java.io.EOFException
+				if (Build.VERSION.SDK != null && Build.VERSION.SDK_INT > 13) { 
+					connection.setRequestProperty("Connection", "close"); 
+				}
 			
 				// TODO: Apply any easily obtainable device/OS info
 				//setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
@@ -131,17 +134,9 @@ class VerificationImpl {
 				// We want to continue to track as we do not want to lose data
 				// over this. It will however not be sent or deleted until we 
 				// have a confirmed successful instruction to track or not.
-			} catch (MalformedURLException e) {
+			} catch (Exception e) {
 				// The KISSmetrics SDK should not cause a customer's app to crash.
 				// Log a warning and continue.
-				Log.w("KISSmetricsAPI", "Verification URL was malformed: " + e);
-			} catch (ProtocolException e) {
-				Log.w("KISSmetricsAPI", "Verification experienced a ProtocolException: " + e);
-			} catch (IOException e) {
-				Log.w("KISSmetricsAPI", "Verification experienced an IOException: " + e);
-			} catch (JSONException e) {
-				Log.w("KISSmetricsAPI", "Verification experienced a JSONException: " + e);
-			} catch (Exception e) {
 				Log.w("KISSmetricsAPI", "Verification experienced an Exception: " + e);
 			} finally {
 			
