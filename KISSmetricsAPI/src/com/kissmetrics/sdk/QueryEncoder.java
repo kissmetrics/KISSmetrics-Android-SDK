@@ -161,9 +161,9 @@ public class QueryEncoder {
     		
     		// Check for valid value
     		String stringValue = properties.get(stringKey);
-    		if (stringValue.length() == 0) {
+    		if (stringValue == null || stringValue.length() == 0) {
                 Log.w("KISSmetricsAPI", 
-                		"Property values must not be empty strings. Dropping property.");
+                		"Property values must not be null or empty strings. Dropping property.");
                 continue;
     		}
 			
