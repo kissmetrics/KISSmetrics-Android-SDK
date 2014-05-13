@@ -140,6 +140,19 @@ public class QueryEncoderTest extends AndroidTestCase {
 	    assertEquals("urlEncodeProperties yields expected URL", expectedEncodedProperties, encodedProperties);
 	}
 	
+	
+	public final void test_urlEncodePropertiesDropsNullValues() {
+		
+	    HashMap<String, String> testPropertyHashMap = new HashMap<String, String>();
+	    testPropertyHashMap.put("Reserved", null);    
+	                                             
+	    String encodedProperties = cut.encodeProperties(testPropertyHashMap);
+	    
+	    String expectedEncodedProperties = "";
+	    
+	    assertEquals("urlEncodeProperties drops null property values", expectedEncodedProperties, encodedProperties);
+	}
+	
 
 	public final void test_createEventQueryWithProperties() {
 		
