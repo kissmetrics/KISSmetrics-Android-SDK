@@ -20,12 +20,18 @@ package com.kissmetrics.sdk;
 
 public class Sender implements ConnectionDelegate {
 
-	SenderState readyState;
-	SenderState sendingState;
-	SenderState disabledState;
+	private SenderState readyState;
+	private SenderState sendingState;
+	private SenderState disabledState;
 	
 	SenderState state = readyState;
 	
+	/*
+	 * Sender constructor
+	 * 
+	 * @param disabled
+	 * 			Used to determine initialized state.
+	 */
 	public Sender(boolean disabled) {
 		
 		readyState = new SenderReadyState(this);
@@ -33,7 +39,7 @@ public class Sender implements ConnectionDelegate {
 		disabledState = new SenderDisabledState(this);
 		
 		if (disabled) {
-			this.state = disabledState;
+			state = disabledState;
 		}
 	}
 	
@@ -65,15 +71,15 @@ public class Sender implements ConnectionDelegate {
 	
 	// Forwarded methods
 	public void startSending() {
-		this.state.startSending();
+		state.startSending();
 	}
 	
 	public void disableSending() {
-		this.state.disableSending();
+		state.disableSending();
 	}
 	
 	public void enableSending() {
-		this.state.enableSending();
+		state.enableSending();
 	}
 	
 	
