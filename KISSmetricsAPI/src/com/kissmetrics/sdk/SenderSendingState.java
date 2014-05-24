@@ -18,6 +18,9 @@
 
 package com.kissmetrics.sdk;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class SenderSendingState implements SenderState {
 	
 	Sender sender;
@@ -26,12 +29,38 @@ public class SenderSendingState implements SenderState {
 		this.sender = sender;
 	}
 	
+	private void sendTopRecord() {
+		
+		// Assemble the full query string by prepending the current baseUrl as last archived.
+		String apiQuery = ArchiverImpl.sharedArchiver().getBaseUrl()+ArchiverImpl.sharedArchiver().getQueryString(0);
+		ConnectionImpl connection = sender.getNewConnection();
+		connection.sendRecord(apiQuery, sender);
+	}
+	
+	private void shutdownExecutor(ExecutorService es) {
+		
+		es.shutdown();
+		
+		try {
+			if (!es.awaitTermination(60, TimeUnit.SECONDS)) {
+				es.shutdownNow(); // Cancel currently executing tasks
+		    }
+		} catch (InterruptedException e) {
+			// (Re-)Cancel if current thread also interrupted
+		    es.shutdownNow();
+		    // Preserve interrupt status
+		    Thread.currentThread().interrupt();
+		}
+	}
+	
 	public void startSending() {
 		// Ignored. We're already sending.
 	}
 	
 	public void disableSending() {
 
+		shutdownExecutor(sender.executorService);
+		
 		// Switch to disabled state first so that ConnectionDelegate's 
 		// connectionComplete is handled by the disabled state while we 
 		// clear the send queue.
@@ -46,38 +75,31 @@ public class SenderSendingState implements SenderState {
 	}
 	
 	public void connectionComplete(String urlString, boolean success, boolean malformed) {
-		
+
 		if (success || malformed) {
-			
-			// We call to remove the query string in the current thread.
-			// This call will be synchronized within the Archiver and ensure
-			// that following reads from the Archiver's sendQueue will 
-			// provide the correct value.
 			ArchiverImpl.sharedArchiver().removeQueryString(0);
 		}
 		
 		if (success) {
 			
 			if (ArchiverImpl.sharedArchiver().getQueueCount() == 0) {
-				
-				// Nothing left to send, switch to the ready state.
-				sender.setState(sender.getReadyState());
-				return;
+				shutdownExecutor(sender.executorService);
 			}
 
-			// Begin sending
+			// Begin sending the next record by adding it to executorService
 			Runnable runnable = new Runnable() { 
 				@Override
 				public void run() {
-					
-					// Assemble the full query string by prepending the current baseUrl as last archived.
-					String apiQuery = ArchiverImpl.sharedArchiver().getBaseUrl()+ArchiverImpl.sharedArchiver().getQueryString(0);
-					ConnectionImpl connection = sender.getNewConnection();
-					connection.sendRecord(apiQuery, sender);
+					sendTopRecord();
 			    }
 			};
-			
-			new Thread(runnable);
+
+			try {
+				sender.executorService.execute(runnable);
+			} catch(Exception e) {
+				// Any failure to execute must place the Sender in a ready state;
+				sender.setState(sender.getReadyState());
+			}
 		}
 	}
 }

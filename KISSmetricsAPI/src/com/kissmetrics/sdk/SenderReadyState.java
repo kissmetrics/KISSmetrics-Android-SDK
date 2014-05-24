@@ -18,6 +18,8 @@
 
 package com.kissmetrics.sdk;
 
+import java.util.concurrent.Executors;
+
 public class SenderReadyState implements SenderState {
 
 	Sender sender;
@@ -26,8 +28,16 @@ public class SenderReadyState implements SenderState {
 		this.sender = sender;
 	}
 	
-	public void startSending() {
+	private void sendTopRecord() {
 		
+		// Assemble the full query string by prepending the current baseUrl as last archived.
+		String apiQuery = ArchiverImpl.sharedArchiver().getBaseUrl()+ArchiverImpl.sharedArchiver().getQueryString(0);
+		ConnectionImpl connection = sender.getNewConnection();
+		connection.sendRecord(apiQuery, sender);
+	}
+	
+	public void startSending() {
+
 		// Ignore if we have nothing to send
 		if (ArchiverImpl.sharedArchiver().getQueueCount() == 0) {
 			return;
@@ -41,17 +51,18 @@ public class SenderReadyState implements SenderState {
 		Runnable runnable = new Runnable() { 
 			@Override
 			public void run() {
-				
-				// Assemble the full query string by prepending the current baseUrl as last archived.
-				String apiQuery = ArchiverImpl.sharedArchiver().getBaseUrl()+ArchiverImpl.sharedArchiver().getQueryString(0);
-				ConnectionImpl connection = sender.getNewConnection();
-				connection.sendRecord(apiQuery, sender);
+				sendTopRecord();
 		    }
 		};
 		
-		// This spawns the thread which will be used until all records 
-		// are sent or sending is disabled.
-		new Thread(runnable);
+		sender.executorService = Executors.newFixedThreadPool(1);
+		
+		try {
+			sender.executorService.execute(runnable);
+		} catch(Exception e) {
+			// Any failure to execute must place the Sender in a ready state;
+			sender.setState(sender.getReadyState());
+		}
 	}
 	
 	public void disableSending() {
@@ -70,7 +81,8 @@ public class SenderReadyState implements SenderState {
 	}
 	
 	public void connectionComplete(String urlString, boolean success, boolean malformed) {
-		// Ignored, connectionComplete should only be handed by the sending state.
+		
+		// Ignored, connectionComplete should only be handled by the sending state.
 		// The only way that this method could be called in this state is if a record 
 		// is being sent at the time that the Sender is disabled and re-enabled.
 		// We take no action because the queue would have already been emptied when 

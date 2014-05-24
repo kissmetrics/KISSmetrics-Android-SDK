@@ -18,14 +18,19 @@
 
 package com.kissmetrics.sdk;
 
+import java.util.concurrent.ExecutorService;
+
 public class Sender implements ConnectionDelegate {
 
+	SenderState state;
+	ExecutorService executorService;
+	ConnectionImpl injectedConnection;
+	
 	private SenderState readyState;
 	private SenderState sendingState;
 	private SenderState disabledState;
 	
-	SenderState state = readyState;
-	
+
 	/*
 	 * Sender constructor
 	 * 
@@ -40,11 +45,17 @@ public class Sender implements ConnectionDelegate {
 		
 		if (disabled) {
 			state = disabledState;
+		} else {
+			state = readyState;
 		}
 	}
 	
-	// This method may be overridden to allow passing of a mock connection to any state.
-	ConnectionImpl getNewConnection(){
+	
+	// Allow use of injectedConnection over new()
+	ConnectionImpl getNewConnection() {
+		if (injectedConnection != null) {
+			return injectedConnection;
+		}
 		return new ConnectionImpl();
 	}
 
