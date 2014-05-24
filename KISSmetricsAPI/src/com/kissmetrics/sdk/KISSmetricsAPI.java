@@ -39,25 +39,17 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	private static final long FAILSAFE_MAX_VERIFICATION_DUR = 1209600000L; // 14 days
 	
 	private static KISSmetricsAPI sharedAPI = null;
-	private static ConnectionImpl connectionImpl = null;
 	private static VerificationImpl verificationImpl = null;
 	private static ExecutorService dataExecutor = Executors.newFixedThreadPool(2);
 	
 	private TrackingRunnables trackingRunnables = null;
-	private Sender sender;
+	
 	private String key;
 	private Context context;
 
-	/**
-	 * Allows for injection of a mock Connection.
-	 * 
-	 * @param connImpl
-	 *            A mock Connection to use under test.
-	 */
-	protected static void setConnectionImpl(ConnectionImpl connImpl) {
-		connectionImpl = connImpl;
-	}
-
+	protected static Sender sender;
+	
+	
 	/**
 	 * Allows for injection of a mock Verification.
 	 * 
@@ -70,20 +62,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 
 	/**
 	 * Initializes the default Connection if not set. Allows for injection of
-	 * mock HttpURLConnection within ConnectionImpl via method override.
-	 * 
-	 * @return Connection
-	 */
-	protected static ConnectionImpl connection() {
-		if (connectionImpl == null) {
-			connectionImpl = new ConnectionImpl();
-		}
-		return connectionImpl;
-	}
-
-	/**
-	 * Initializes the default Connection if not set. Allows for injection of
-	 * mock HttpURLConnection within VerificationImpl via method override.
+	 * mock HttpURLConnection within VerificationImpl.
 	 * 
 	 * Returns the injected verificationImpl if it exists.
 	 * 
@@ -129,9 +108,10 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 			ArchiverImpl.sharedArchiver().archiveFirstIdentity(
 					generateID());
 		}
-
-		// Initialize Sender using archived doSend boolean to set disabled/ready state.
-		sender = new Sender(!ArchiverImpl.sharedArchiver().getDoSend());
+		
+		if (sender == null) {
+			sender = new Sender(!ArchiverImpl.sharedArchiver().getDoSend());
+		}
 		
 		// Set the TrackingRunnables state
 		if (ArchiverImpl.sharedArchiver().getDoTrack()) {
