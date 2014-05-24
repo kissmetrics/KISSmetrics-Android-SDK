@@ -44,7 +44,7 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveIdentity(identity);
-				kmapi.recursiveSend();
+				kmapi.sendRecords();
 			}
 		};
 		
@@ -67,7 +67,7 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveAlias(alias, identity);
-				kmapi.recursiveSend();
+				kmapi.sendRecords();
 			}
 		};
 		
@@ -111,7 +111,7 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveEvent(name, properties);	
-				kmapi.recursiveSend();
+				kmapi.sendRecords();
 			}
 		};
 		
@@ -134,7 +134,7 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveEventOnce(name);
-				kmapi.recursiveSend();
+				kmapi.sendRecords();
 			}
 		};
 		
@@ -156,7 +156,7 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveProperties(properties);
-				kmapi.recursiveSend();	
+				kmapi.sendRecords();	
 			}
 		};
 		
@@ -180,7 +180,7 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveDistinctProperty(key, value);
-				kmapi.recursiveSend();
+				kmapi.sendRecords();
 			}
 		};
 		

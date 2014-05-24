@@ -85,12 +85,11 @@ class VerificationImpl {
 
 			try {
 				url = new URL(urlString);
-			
 				connection = createHttpURLConnection(url);
 				connection.setUseCaches(true); // !!!: Set cache location. ???:Override expiration
 				connection.setRequestMethod("GET");
 				connection.setConnectTimeout(CONNECTION_TIMEOUT * 1000);
-				connection.setRequestProperty("User-Agent", "KISSmetrics-Android/2.0");
+				connection.setRequestProperty("User-Agent", "KISSmetrics-Android/2.0.3");
 				
 				// addressing java.io.EOFException
 				if (Build.VERSION.SDK != null && Build.VERSION.SDK_INT > 13) { 

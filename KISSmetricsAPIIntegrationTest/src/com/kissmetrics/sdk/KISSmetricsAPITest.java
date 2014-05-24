@@ -40,6 +40,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.test.ActivityTestCase;
 
+
 public class KISSmetricsAPITest extends ActivityTestCase {
 
 	String key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
@@ -47,7 +48,6 @@ public class KISSmetricsAPITest extends ActivityTestCase {
 	int urlSuccessCount;
 	int urlErrorCount;
 	int urlBadStatusCount;
-	
 	
 	public void uth_resetKISSmetricsAPISingleton() {
         Field instance;
@@ -132,8 +132,10 @@ public class KISSmetricsAPITest extends ActivityTestCase {
 		TestableConnectionImpl testableConnectionImpl = new TestableConnectionImpl();
 		testableConnectionImpl.setHttpURLConnection(mockConnection);
 		
-		// Inject our ConnectionImpl instance with mocked HttpURLConnection
-		KISSmetricsAPI.setConnectionImpl(testableConnectionImpl);
+		// We need to mock this Sender so that it uses our testableConnectionImpl
+		Sender sender = new Sender(false);
+		sender.injectedConnection = testableConnectionImpl;
+		KISSmetricsAPI.sender = sender;
     }
     
     
@@ -141,7 +143,7 @@ public class KISSmetricsAPITest extends ActivityTestCase {
     	
     	// Expected JSON payload = { "reason": "PRODUCT_SAMPLING", "tracking": false, "tracking_endpoint": "trk.kissmetrics.com"}
     	String mockJson = "{\"tracking\": " + tracking + ", \"tracking_endpoint\": \"trk.kissmetrics.com\" }";
-    	long expDate = dateForNow().getTime();
+    	long expDate = dateForNow().getTime() + 86400000;
     	MockHttpURLConnection mockConnection = mockConnection("http://www.kissmetrics.com/", mockJson, "HTTP/1.1 200 OK", expDate);
     	
     	TestableVerificationImpl testableVerificationImpl = new TestableVerificationImpl();
@@ -222,7 +224,7 @@ public class KISSmetricsAPITest extends ActivityTestCase {
 		
 		startApiWithTrackingAndResponseHeader("true", "HTTP/1.1 200 OK");
 		
-		for(int i=0; i<100; i++) {
+		for (int i=0; i<100; i++) {
 			KISSmetricsAPI.sharedAPI().record("liveServerTest");
 		}
 		
