@@ -57,7 +57,7 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
 		super.setUp();
 		
 		try {
-			testUrl = new URL("http://www.google.com/"); // <- Not special url required, just needs to be valid.
+			testUrl = new URL("http://www.google.com/"); // <- No special url required, just needs to be valid.
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} 
