@@ -190,6 +190,18 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 		}).start();
 	}
 
+	/**
+	 * @return app version from package info
+	 */
+	private String appVersionName() {
+		try {
+			PackageManager pkgManager = context.getPackageManager();
+			String pkg = context.getPackageName();
+			return pkgManager.getPackageInfo(pkg, 0).versionName;
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	
 	/**
 	 * Starts sending to empty the sendQueue when sender is in the 
@@ -311,31 +323,30 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 		dataExecutor.execute(trackingRunnables.setDistinct(propertyName,
 				value, ArchiverImpl.sharedArchiver(), this));
 	}
-
+	
 	/**
 	 * Automatically records the following events "Installed App" "Updated App"
 	 */
 	public void autoRecordInstalls() {
 
-		PackageManager pkgManager = context.getPackageManager();
-		String versionName = "";
-
-		try {
-			String pkg = context.getPackageName();
-			versionName = pkgManager.getPackageInfo(pkg, 0).versionName;
+		String versionName = appVersionName();
+		
+		if (versionName == null) {
+			versionName = "";
+		} else {
 			setDistinct("App Version", versionName);
-		} catch (Exception e) {
-			// Catch intentionally blank
 		}
 
 		// There is no reliable place to store data that will persist between
 		// app install and uninstall. We use Archiver's settings store.
 		String lastAppVersion = ArchiverImpl.sharedArchiver().getAppVersion();
-
+		
 		if (versionName.equals(lastAppVersion)) {
 			// Most common case. No action required.
 			return;
 		}
+		
+		ArchiverImpl.sharedArchiver().archiveAppVersion(versionName);
 
 		if (lastAppVersion == null) {
 			// This is a fresh install
@@ -344,8 +355,6 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 			// This is an update
 			record("Updated App");
 		}
-
-		ArchiverImpl.sharedArchiver().archiveAppVersion(versionName);
 	}
 
 	/**
