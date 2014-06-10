@@ -28,6 +28,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.cactus.mock.MockHttpURLConnection;
 import org.junit.After;
@@ -224,14 +226,53 @@ public class KISSmetricsAPITest extends ActivityTestCase {
 		
 		startApiWithTrackingAndResponseHeader("true", "HTTP/1.1 200 OK");
 		
-		for (int i=0; i<100; i++) {
-			KISSmetricsAPI.sharedAPI().record("liveServerTest");
-		}
+		Runnable runnable1 = new Runnable() { 
+			@Override
+			public void run() {
+				for (int i=0; i<100; i++) {
+					KISSmetricsAPI.sharedAPI().record("liveServerTest_thread1_"+i);
+				}
+			}
+		};
+		ExecutorService service1 = Executors.newFixedThreadPool(1);
+		service1.execute(runnable1);	
 		
-		Thread.sleep(10000);
+		Runnable runnable2 = new Runnable() { 
+			@Override
+			public void run() {
+				for (int i=0; i<100; i++) {
+					KISSmetricsAPI.sharedAPI().record("liveServerTest_thread2_"+i);
+				}
+			}
+		};
+		ExecutorService service2 = Executors.newFixedThreadPool(1);
+		service2.execute(runnable2);
+	
+		Thread.sleep(20000);
 		assertEquals("Does not retain successfully uploaded records", 0, ArchiverImpl.sharedArchiver().getQueueCount());
 	}
 
+	public final void testEmptyQueuePlacesSenderInReadyState() throws InterruptedException {
+		
+		startApiWithTrackingAndResponseHeader("true", "HTTP/1.1 200 OK");
+		
+		// Send 10 records
+		for (int i=0; i<10; i++) {
+			KISSmetricsAPI.sharedAPI().record("senderStateTest_batch_1");
+		}
+		
+		// Allow the queue to empty and the executor to shutdown
+		Thread.sleep(1000);
+		
+		// Send another 10 records
+		// If Sender is not in the ready state, these will not be sent
+		for (int i=0; i<10; i++) {
+			KISSmetricsAPI.sharedAPI().record("senderStateTest_batch_2");
+		}
+		
+		Thread.sleep(1000);
+		assertEquals("Does not retain successfully uploaded records", 0, ArchiverImpl.sharedArchiver().getQueueCount());
+	}
 	
 	public final void testIdentifySetsIdentity() throws InterruptedException {
 		
