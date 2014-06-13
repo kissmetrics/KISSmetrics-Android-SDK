@@ -37,20 +37,24 @@ public class SenderSendingState implements SenderState {
 		connection.sendRecord(apiQuery, sender);
 	}
 	
-	private void shutdownExecutor(ExecutorService es) {
-		
-		es.shutdown();
-		
-		try {
-			if (!es.awaitTermination(60, TimeUnit.SECONDS)) {
-				es.shutdownNow(); // Cancel currently executing tasks
+	private void shutdownExecutor(final ExecutorService es) {
+
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+		    public void run() {
+		        es.shutdown();
+
+		        try {
+					if (!es.awaitTermination(60, TimeUnit.SECONDS)) {
+						es.shutdownNow();
+					}
+				} catch (InterruptedException e) {
+					// (Re-)Cancel if current thread also interrupted
+				    es.shutdownNow();
+				    // Preserve interrupt status
+				    Thread.currentThread().interrupt();
+				}
 		    }
-		} catch (InterruptedException e) {
-			// (Re-)Cancel if current thread also interrupted
-		    es.shutdownNow();
-		    // Preserve interrupt status
-		    Thread.currentThread().interrupt();
-		}
+		});
 	}
 	
 	public void startSending() {
@@ -75,15 +79,19 @@ public class SenderSendingState implements SenderState {
 	}
 	
 	public void connectionComplete(String urlString, boolean success, boolean malformed) {
-
+		
 		if (success || malformed) {
 			ArchiverImpl.sharedArchiver().removeQueryString(0);
 		}
 		
 		if (success) {
 			
+			// If there's nothing left to send, switch to the ready state
 			if (ArchiverImpl.sharedArchiver().getQueueCount() == 0) {
 				shutdownExecutor(sender.executorService);
+				sender.setState(sender.getReadyState());
+				
+				return;
 			}
 
 			// Begin sending the next record by adding it to executorService
@@ -100,6 +108,12 @@ public class SenderSendingState implements SenderState {
 				// Any failure to execute must place the Sender in a ready state;
 				sender.setState(sender.getReadyState());
 			}
+			
+		} else {
+			// Failure to succeed will likely be due to connectivity issues.
+			// Stop sending and place the Sender in the ready state.
+			shutdownExecutor(sender.executorService);
+			sender.setState(sender.getReadyState());
 		}
 	}
 }
