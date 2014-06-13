@@ -82,20 +82,28 @@ public class Sender implements ConnectionDelegate {
 	
 	// Forwarded methods
 	public void startSending() {
-		state.startSending();
+		synchronized (this) {
+			state.startSending();
+		}
 	}
 	
 	public void disableSending() {
-		state.disableSending();
+		synchronized (this) {
+			state.disableSending();
+		}
 	}
 	
 	public void enableSending() {
-		state.enableSending();
+		synchronized (this) {
+			state.enableSending();
+		}
 	}
 	
 	
 	// ConnectionDelegate method
 	public void connectionComplete(String urlString, boolean success, boolean malformed) {
-		state.connectionComplete(urlString, success, malformed);
+		synchronized (this) {
+			state.connectionComplete(urlString, success, malformed);
+		}
 	}
 }
