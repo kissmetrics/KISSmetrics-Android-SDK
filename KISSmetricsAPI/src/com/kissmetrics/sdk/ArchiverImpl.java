@@ -41,7 +41,7 @@ import android.util.Log;
 public class ArchiverImpl implements Archiver {
 
 	private static final String  CLIENT_TYPE = "mobile_app";
-	private static final String  USER_AGENT = "kissmetrics-android/2.0.4";
+	private static final String  USER_AGENT = "kissmetrics-android/2.0.5";
 	private static final String  IDENTITY_PREF = "KISSmetricsIdentity";
 	private static final String  SETTINGS_FILE = "KISSmetricsSettings";
 	private static final String  INSTALL_UUID_KEY = "installUuid";
