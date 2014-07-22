@@ -185,10 +185,10 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	}
 
 	
-	public void uth_archiveSavedEvents() {
+	public void uth_archiveSavedIdEvents() {
 		Method method = null;
 		try {
-			method = ArchiverImpl.sharedArchiver().getClass().getDeclaredMethod("archiveSavedEvents", new Class[]{});
+			method = ArchiverImpl.sharedArchiver().getClass().getDeclaredMethod("archiveSavedIdEvents", new Class[]{});
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
@@ -212,10 +212,10 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	}
 	
 	
-	public void uth_unarchiveSavedEvents() {
+	public void uth_unarchiveSavedIdEvents() {
 		Method method = null;
 		try {
-			method = ArchiverImpl.sharedArchiver().getClass().getDeclaredMethod("unarchiveSavedEvents", new Class[]{});
+			method = ArchiverImpl.sharedArchiver().getClass().getDeclaredMethod("unarchiveSavedIdEvents", new Class[]{});
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
@@ -240,11 +240,11 @@ public class ArchiverImplActTest extends ActivityTestCase {
 
 	
 	@SuppressWarnings("unchecked")
-	public List<String> uth_getSavedEvents() {
+	public List<String> uth_getSavedIdEvents() {
 		Field f;
 		List<String> r = null;
 		try {
-			f = ArchiverImpl.class.getDeclaredField("savedEvents");
+			f = ArchiverImpl.class.getDeclaredField("savedIdEvents");
 			f.setAccessible(true);
 			r = (List<String>) f.get(ArchiverImpl.sharedArchiver());
 		} catch (SecurityException e) {
@@ -691,7 +691,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	}
 	
 	
-	public final void testArchiveIdentityClearsSavedEventsWhenLastIdentityWasNotGeneric()
+	public final void testArchiveIdentityClearsSavedIdEventsWhenLastIdentityWasNotGeneric()
 	{
 		ArchiverImpl.sharedArchiver().archiveFirstIdentity("someUnknownGenericIdentity");
 		ArchiverImpl.sharedArchiver().archiveIdentity("someKnownIdentity@example.com");
@@ -704,11 +704,11 @@ public class ArchiverImplActTest extends ActivityTestCase {
 		uth_writeObjectToInternalStorageFile(expectedEvents, "KISSmetricsSavedEvents");
 		
 		// Unarchive saved events
-		uth_unarchiveSavedEvents();
+		uth_unarchiveSavedIdEvents();
 
 		ArchiverImpl.sharedArchiver().archiveIdentity("aDifferentUser@example.com");
 		
-		assertEquals("No query is created for the archived identity", 0, this.uth_getSavedEvents().size());
+		assertEquals("No query is created for the archived identity", 0, this.uth_getSavedIdEvents().size());
 	}
 	
 	
@@ -987,10 +987,10 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	@SuppressWarnings("unchecked")
 	public final void testArchiveSavedEvents() {
 
-		List<String> savedEvents = this.uth_getSavedEvents();
+		List<String> savedEvents = this.uth_getSavedIdEvents();
 		savedEvents.add("testEvent");
 		
-		this.uth_archiveSavedEvents();
+		this.uth_archiveSavedIdEvents();
 		
 		// Read from the file system directly
 		List<String> archivedEvents = (List<String>) this.uth_getInternalStorageObjectOfType(ArrayList.class, getInstrumentation().getTargetContext(), "KISSmetricsSavedEvents");
@@ -1009,8 +1009,8 @@ public class ArchiverImplActTest extends ActivityTestCase {
 		uth_writeObjectToInternalStorageFile(expectedEvents, "KISSmetricsSavedEvents");
 		
 		// Unarchive saved events
-		uth_unarchiveSavedEvents();
-		List<String> savedEvents = uth_getSavedEvents();
+		uth_unarchiveSavedIdEvents();
+		List<String> savedEvents = uth_getSavedIdEvents();
 		
 		assertEquals("archiveSavedEvents must retain integrity upon unarchiving", expectedEvents, savedEvents);
 	}
@@ -1018,14 +1018,14 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	
 	public final void testClearSavedEvents() {
 		
-		List<String> savedEvents = this.uth_getSavedEvents();
+		List<String> savedEvents = this.uth_getSavedIdEvents();
 		savedEvents.add("testEvent");
 		
-		this.uth_archiveSavedEvents();
+		this.uth_archiveSavedIdEvents();
 		
 		ArchiverImpl.sharedArchiver().clearSavedIdEvents();
 		
-		assertEquals("clearSavedEvents empties the savedEvents array", 0, this.uth_getSavedEvents().size());
+		assertEquals("clearSavedEvents empties the savedEvents array", 0, this.uth_getSavedIdEvents().size());
 	}
 	
 	
