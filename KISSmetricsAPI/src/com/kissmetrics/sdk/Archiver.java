@@ -20,6 +20,8 @@ package com.kissmetrics.sdk;
 
 import java.util.HashMap;
 
+import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
+
 
 /**
  * Archiver interface
@@ -34,8 +36,7 @@ public interface Archiver {
 	public void archiveHasGenericIdentity(final boolean hasGenericIdentity);
 	public void archiveAppVersion(final String appVersion);
 	public void archiveFirstIdentity(final String identity);
-	public void archiveEvent(final String name, final HashMap<String, String> properties);
-	public void archiveEventOnce(final String name);
+	public void archiveEvent(final String name, final HashMap<String, String> properties, RecordCondition condition);
 	public void archiveProperties(final HashMap<String, String> properties);
 	public void archiveDistinctProperty(final String name, final String value);
 	public void archiveIdentity(final String identity);
