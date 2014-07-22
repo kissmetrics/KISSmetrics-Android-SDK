@@ -261,6 +261,82 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	}
 	
 	
+	public void uth_archiveSavedInstallEvents() {
+		Method method = null;
+		try {
+			method = ArchiverImpl.sharedArchiver().getClass().getDeclaredMethod("archiveSavedInstallEvents", new Class[]{});
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		
+		if (method != null) {
+			if (!method.isAccessible()) {
+				method.setAccessible(true);
+			}
+			try {
+				method.invoke(ArchiverImpl.sharedArchiver(), new Object[]{});
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
+	public void uth_unarchiveSavedInstallEvents() {
+		Method method = null;
+		try {
+			method = ArchiverImpl.sharedArchiver().getClass().getDeclaredMethod("unarchiveSavedInstallEvents", new Class[]{});
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		
+		if (method != null) {
+			if (!method.isAccessible()) {
+				method.setAccessible(true);
+			}
+			try {
+				method.invoke(ArchiverImpl.sharedArchiver(), new Object[]{});
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	public List<String> uth_getSavedInstallEvents() {
+		Field f;
+		List<String> r = null;
+		try {
+			f = ArchiverImpl.class.getDeclaredField("savedInstallEvents");
+			f.setAccessible(true);
+			r = (List<String>) f.get(ArchiverImpl.sharedArchiver());
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} //IllegalAccessException
+		
+		return r;
+	}
+	
+	
 	public void uth_archiveSavedProperties() {
 		Method method = null;
 		try {
@@ -371,6 +447,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
     	getInstrumentation().getTargetContext().deleteFile("KISSmetricsSettings");
     	getInstrumentation().getTargetContext().deleteFile("KISSmetricsActions");
     	getInstrumentation().getTargetContext().deleteFile("KISSmetricsSavedEvents");
+    	getInstrumentation().getTargetContext().deleteFile("KISSmetricsSavedInstallEvents");
     	getInstrumentation().getTargetContext().deleteFile("KISSmetricsSavedProperties");
     }
     
@@ -985,47 +1062,79 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	
 	
 	@SuppressWarnings("unchecked")
-	public final void testArchiveSavedEvents() {
+	public final void testArchiveSavedIdEvents() {
 
-		List<String> savedEvents = this.uth_getSavedIdEvents();
-		savedEvents.add("testEvent");
+		List<String> savedIdEvents = this.uth_getSavedIdEvents();
+		savedIdEvents.add("testIdEvent");
 		
 		this.uth_archiveSavedIdEvents();
 		
 		// Read from the file system directly
-		List<String> archivedEvents = (List<String>) this.uth_getInternalStorageObjectOfType(ArrayList.class, getInstrumentation().getTargetContext(), "KISSmetricsSavedEvents");
+		List<String> archivedIdEvents = (List<String>) this.uth_getInternalStorageObjectOfType(ArrayList.class, getInstrumentation().getTargetContext(), "KISSmetricsSavedEvents");
 
-		assertEquals("archiveSavedEvents must retain integrity upon archiving", savedEvents, archivedEvents);
+		assertEquals("archiveSavedEvents must retain integrity upon archiving", savedIdEvents, archivedIdEvents);
 	}
 	
 	
-	public final void testUnarchiveSavedEvents() {
+	public final void testUnarchiveSavedIdEvents() {
 		
 		// Populate and directly archive the test events
-		List<String> expectedEvents = new ArrayList<String>();
-		expectedEvents.add("testEvent");
+		List<String> expectedIdEvents = new ArrayList<String>();
+		expectedIdEvents.add("testIdEvent");
 	
 		// Write to the file system directly
-		uth_writeObjectToInternalStorageFile(expectedEvents, "KISSmetricsSavedEvents");
+		uth_writeObjectToInternalStorageFile(expectedIdEvents, "KISSmetricsSavedEvents");
 		
 		// Unarchive saved events
 		uth_unarchiveSavedIdEvents();
 		List<String> savedEvents = uth_getSavedIdEvents();
 		
-		assertEquals("archiveSavedEvents must retain integrity upon unarchiving", expectedEvents, savedEvents);
+		assertEquals("archiveSavedEvents must retain integrity upon unarchiving", expectedIdEvents, savedEvents);
 	}
 	
 	
-	public final void testClearSavedEvents() {
+	public final void testClearSavedIdEvents() {
 		
-		List<String> savedEvents = this.uth_getSavedIdEvents();
-		savedEvents.add("testEvent");
+		List<String> savedIdEvents = this.uth_getSavedIdEvents();
+		savedIdEvents.add("testIdEvent");
 		
 		this.uth_archiveSavedIdEvents();
 		
 		ArchiverImpl.sharedArchiver().clearSavedIdEvents();
 		
-		assertEquals("clearSavedEvents empties the savedEvents array", 0, this.uth_getSavedIdEvents().size());
+		assertEquals("clearSavedIdEvents empties the savedEvents array", 0, this.uth_getSavedIdEvents().size());
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public final void testArchiveSavedInstallEvents() {
+
+		List<String> savedInstallEvents = this.uth_getSavedInstallEvents();
+		savedInstallEvents.add("testInstallEvent");
+		
+		this.uth_archiveSavedInstallEvents();
+		
+		// Read from the file system directly
+		List<String> archivedInstallEvents = (List<String>) this.uth_getInternalStorageObjectOfType(ArrayList.class, getInstrumentation().getTargetContext(), "KISSmetricsSavedInstallEvents");
+
+		assertEquals("archiveSavedInstallEvents must retain integrity upon archiving", savedInstallEvents, archivedInstallEvents);
+	}
+	
+	
+	public final void testUnarchiveSavedInstallEvents() {
+		
+		// Populate and directly archive the test events
+		List<String> expectedInstallEvents = new ArrayList<String>();
+		expectedInstallEvents.add("testInstallEvent");
+	
+		// Write to the file system directly
+		uth_writeObjectToInternalStorageFile(expectedInstallEvents, "KISSmetricsSavedInstallEvents");
+		
+		// Unarchive saved events
+		uth_unarchiveSavedInstallEvents();
+		List<String> savedInstallEvents = uth_getSavedInstallEvents();
+		
+		assertEquals("archiveSavedEvents must retain integrity upon unarchiving", expectedInstallEvents, savedInstallEvents);
 	}
 	
 	
