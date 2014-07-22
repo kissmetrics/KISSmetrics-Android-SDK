@@ -735,7 +735,7 @@ public class ArchiverImpl implements Archiver {
 			else {
 				// This is expected to be an entirely different user.
 				// Clear saved Events and Properties just as we would when clearing an Identity
-				this.clearSavedEvents();
+				this.clearSavedIdEvents();
 				this.clearSavedProperties();
 			}
     	}

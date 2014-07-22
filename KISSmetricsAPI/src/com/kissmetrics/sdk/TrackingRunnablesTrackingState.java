@@ -89,7 +89,7 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveFirstIdentity(newIdentity);
-				archiver.clearSavedEvents();
+				archiver.clearSavedIdEvents();
 				archiver.clearSavedProperties();
 			}
 		};
@@ -109,7 +109,7 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 	 * @return A Runnable object that will archive and send an event.
 	 */
 	public Runnable record(final String name, final HashMap<String, String> properties, 
-						   RecordCondition condition, final Archiver archiver, 
+						   final RecordCondition condition, final Archiver archiver, 
 						   final KISSmetricsAPI kmapi)	{
 		
 		Runnable runnable = new Runnable() {
@@ -137,7 +137,7 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		
 		Runnable runnable = new Runnable() {
 			public void run() {
-				archiver.archiveEventOnce(name);
+				archiver.archiveEvent(name, null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
 				kmapi.sendRecords();
 			}
 		};

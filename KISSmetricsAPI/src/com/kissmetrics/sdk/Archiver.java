@@ -43,7 +43,7 @@ public interface Archiver {
 	public void archiveAlias(final String alias, final String identity);
 	
 	public void clearSendQueue();
-	public void clearSavedEvents();
+	public void clearSavedIdEvents();
 	public void clearSavedProperties();
 	public String getQueryString(final int index);
 	public void removeQueryString(final int index);

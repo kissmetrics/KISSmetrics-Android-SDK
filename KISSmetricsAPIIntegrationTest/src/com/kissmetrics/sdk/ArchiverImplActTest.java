@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.kissmetrics.sdk.ArchiverImpl;
+import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
 import com.kissmetrics.sdk.QueryEncoder;
 
 import android.app.Activity;
@@ -820,7 +821,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
 		String expectedRecord = queryEncoder.createEventQuery(eventNameString, null, identity, timestamp);
 		
 		// Use archiveRecord to create a similar record. (timestamp may not match expected record)
-		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, null);
+		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, null, RecordCondition.RECORD_ALWAYS);
 		
 		// !!!: The timestamp of the archiveRecord and the expectedRecord may not match.
 		// If this is a frequent result we should remove the &t=xxxxxxxxx from
@@ -844,7 +845,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
 		String expectedRecord = queryEncoder.createEventQuery(eventNameString, propertiesMap, identityString, timestamp);
 		
 		// Use archiveRecord to create a similar record. (timestamp may not match expected record)
-		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, propertiesMap);
+		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, propertiesMap, RecordCondition.RECORD_ALWAYS);
 		
 		// !!!: The timestamp of the archiveRecord and the expectedRecord may not match.
 		// If this is a frequent result we should remove the &t=xxxxxxxxx from
@@ -854,13 +855,13 @@ public class ArchiverImplActTest extends ActivityTestCase {
 
 	
 	public final void testArchiveRecordIgnoresNull() {
-		ArchiverImpl.sharedArchiver().archiveEvent(null, null);
+		ArchiverImpl.sharedArchiver().archiveEvent(null, null, RecordCondition.RECORD_ALWAYS);
 		assertEquals("archiveRecord ignores null events", null, ArchiverImpl.sharedArchiver().getQueryString(0));
 	}
 
 	
 	public final void testArchiveRecordIgnoresEmptyString() {
-		ArchiverImpl.sharedArchiver().archiveEvent("", null);
+		ArchiverImpl.sharedArchiver().archiveEvent("", null, RecordCondition.RECORD_ALWAYS);
 		assertEquals("archiveRecord ignores empty events", null, ArchiverImpl.sharedArchiver().getQueryString(0));
 	}
 	
@@ -908,7 +909,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
 		long timestamp = System.currentTimeMillis()/1000;
 		String expectedRecord = queryEncoder.createEventQuery(eventName, null, identity, timestamp);
 		
-		ArchiverImpl.sharedArchiver().archiveEventOnce(eventName);
+		ArchiverImpl.sharedArchiver().archiveEvent(eventName, null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
 		
 		assertEquals("archiveRecordOnce adds an event to the sendQueue when the event is unique", expectedRecord, ArchiverImpl.sharedArchiver().getQueryString(0));
 	}
@@ -918,18 +919,18 @@ public class ArchiverImplActTest extends ActivityTestCase {
 		
 		String eventNameString = "uniqueRecord";
 	
-		ArchiverImpl.sharedArchiver().archiveEventOnce(eventNameString);
-		ArchiverImpl.sharedArchiver().archiveEventOnce(eventNameString);
-		ArchiverImpl.sharedArchiver().archiveEventOnce(eventNameString);
+		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
+		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
+		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
 		
 		assertEquals("archiveRecordOnce must not archive subsequent calls to record the same event name", 1, ArchiverImpl.sharedArchiver().getQueueCount());
 	}
 	
 	
 	public final void testArchiveRecordOnceAllowedAfterClearingSavedEvents() {
-		ArchiverImpl.sharedArchiver().archiveEventOnce("eventName");
-		ArchiverImpl.sharedArchiver().clearSavedEvents();
-		ArchiverImpl.sharedArchiver().archiveEventOnce("eventName");
+		ArchiverImpl.sharedArchiver().archiveEvent("eventName", null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
+		ArchiverImpl.sharedArchiver().clearSavedIdEvents();
+		ArchiverImpl.sharedArchiver().archiveEvent("eventName", null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
 		
 		assertEquals("archiveRecordOnce allows for recording unique events of the same name after clearing saved events", 2, ArchiverImpl.sharedArchiver().getQueueCount());
 	}
@@ -1022,7 +1023,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
 		
 		this.uth_archiveSavedEvents();
 		
-		ArchiverImpl.sharedArchiver().clearSavedEvents();
+		ArchiverImpl.sharedArchiver().clearSavedIdEvents();
 		
 		assertEquals("clearSavedEvents empties the savedEvents array", 0, this.uth_getSavedEvents().size());
 	}
