@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.kissmetrics.sdk.ArchiverImpl;
+import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
 import com.kissmetrics.sdk.QueryEncoder;
 
 import android.app.Activity;
@@ -51,7 +52,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	static QueryEncoder queryEncoder;
 	
 	static String key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-	static String userAgent = "kissmetrics-android/2.0.5";
+	static String userAgent = "kissmetrics-android/2.1.0";
 	static String clientType = "mobile_app";
 	
 
@@ -184,10 +185,10 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	}
 
 	
-	public void uth_archiveSavedEvents() {
+	public void uth_archiveSavedIdEvents() {
 		Method method = null;
 		try {
-			method = ArchiverImpl.sharedArchiver().getClass().getDeclaredMethod("archiveSavedEvents", new Class[]{});
+			method = ArchiverImpl.sharedArchiver().getClass().getDeclaredMethod("archiveSavedIdEvents", new Class[]{});
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
@@ -211,10 +212,10 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	}
 	
 	
-	public void uth_unarchiveSavedEvents() {
+	public void uth_unarchiveSavedIdEvents() {
 		Method method = null;
 		try {
-			method = ArchiverImpl.sharedArchiver().getClass().getDeclaredMethod("unarchiveSavedEvents", new Class[]{});
+			method = ArchiverImpl.sharedArchiver().getClass().getDeclaredMethod("unarchiveSavedIdEvents", new Class[]{});
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
@@ -239,11 +240,87 @@ public class ArchiverImplActTest extends ActivityTestCase {
 
 	
 	@SuppressWarnings("unchecked")
-	public List<String> uth_getSavedEvents() {
+	public List<String> uth_getSavedIdEvents() {
 		Field f;
 		List<String> r = null;
 		try {
-			f = ArchiverImpl.class.getDeclaredField("savedEvents");
+			f = ArchiverImpl.class.getDeclaredField("savedIdEvents");
+			f.setAccessible(true);
+			r = (List<String>) f.get(ArchiverImpl.sharedArchiver());
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} //IllegalAccessException
+		
+		return r;
+	}
+	
+	
+	public void uth_archiveSavedInstallEvents() {
+		Method method = null;
+		try {
+			method = ArchiverImpl.sharedArchiver().getClass().getDeclaredMethod("archiveSavedInstallEvents", new Class[]{});
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		
+		if (method != null) {
+			if (!method.isAccessible()) {
+				method.setAccessible(true);
+			}
+			try {
+				method.invoke(ArchiverImpl.sharedArchiver(), new Object[]{});
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
+	public void uth_unarchiveSavedInstallEvents() {
+		Method method = null;
+		try {
+			method = ArchiverImpl.sharedArchiver().getClass().getDeclaredMethod("unarchiveSavedInstallEvents", new Class[]{});
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		
+		if (method != null) {
+			if (!method.isAccessible()) {
+				method.setAccessible(true);
+			}
+			try {
+				method.invoke(ArchiverImpl.sharedArchiver(), new Object[]{});
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	public List<String> uth_getSavedInstallEvents() {
+		Field f;
+		List<String> r = null;
+		try {
+			f = ArchiverImpl.class.getDeclaredField("savedInstallEvents");
 			f.setAccessible(true);
 			r = (List<String>) f.get(ArchiverImpl.sharedArchiver());
 		} catch (SecurityException e) {
@@ -370,6 +447,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
     	getInstrumentation().getTargetContext().deleteFile("KISSmetricsSettings");
     	getInstrumentation().getTargetContext().deleteFile("KISSmetricsActions");
     	getInstrumentation().getTargetContext().deleteFile("KISSmetricsSavedEvents");
+    	getInstrumentation().getTargetContext().deleteFile("KISSmetricsSavedInstallEvents");
     	getInstrumentation().getTargetContext().deleteFile("KISSmetricsSavedProperties");
     }
     
@@ -690,7 +768,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	}
 	
 	
-	public final void testArchiveIdentityClearsSavedEventsWhenLastIdentityWasNotGeneric()
+	public final void testArchiveIdentityClearsSavedIdEventsWhenLastIdentityWasNotGeneric()
 	{
 		ArchiverImpl.sharedArchiver().archiveFirstIdentity("someUnknownGenericIdentity");
 		ArchiverImpl.sharedArchiver().archiveIdentity("someKnownIdentity@example.com");
@@ -703,11 +781,11 @@ public class ArchiverImplActTest extends ActivityTestCase {
 		uth_writeObjectToInternalStorageFile(expectedEvents, "KISSmetricsSavedEvents");
 		
 		// Unarchive saved events
-		uth_unarchiveSavedEvents();
+		uth_unarchiveSavedIdEvents();
 
 		ArchiverImpl.sharedArchiver().archiveIdentity("aDifferentUser@example.com");
 		
-		assertEquals("No query is created for the archived identity", 0, this.uth_getSavedEvents().size());
+		assertEquals("No query is created for the archived identity", 0, this.uth_getSavedIdEvents().size());
 	}
 	
 	
@@ -820,7 +898,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
 		String expectedRecord = queryEncoder.createEventQuery(eventNameString, null, identity, timestamp);
 		
 		// Use archiveRecord to create a similar record. (timestamp may not match expected record)
-		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, null);
+		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, null, RecordCondition.RECORD_ALWAYS);
 		
 		// !!!: The timestamp of the archiveRecord and the expectedRecord may not match.
 		// If this is a frequent result we should remove the &t=xxxxxxxxx from
@@ -844,7 +922,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
 		String expectedRecord = queryEncoder.createEventQuery(eventNameString, propertiesMap, identityString, timestamp);
 		
 		// Use archiveRecord to create a similar record. (timestamp may not match expected record)
-		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, propertiesMap);
+		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, propertiesMap, RecordCondition.RECORD_ALWAYS);
 		
 		// !!!: The timestamp of the archiveRecord and the expectedRecord may not match.
 		// If this is a frequent result we should remove the &t=xxxxxxxxx from
@@ -854,13 +932,13 @@ public class ArchiverImplActTest extends ActivityTestCase {
 
 	
 	public final void testArchiveRecordIgnoresNull() {
-		ArchiverImpl.sharedArchiver().archiveEvent(null, null);
+		ArchiverImpl.sharedArchiver().archiveEvent(null, null, RecordCondition.RECORD_ALWAYS);
 		assertEquals("archiveRecord ignores null events", null, ArchiverImpl.sharedArchiver().getQueryString(0));
 	}
 
 	
 	public final void testArchiveRecordIgnoresEmptyString() {
-		ArchiverImpl.sharedArchiver().archiveEvent("", null);
+		ArchiverImpl.sharedArchiver().archiveEvent("", null, RecordCondition.RECORD_ALWAYS);
 		assertEquals("archiveRecord ignores empty events", null, ArchiverImpl.sharedArchiver().getQueryString(0));
 	}
 	
@@ -908,7 +986,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
 		long timestamp = System.currentTimeMillis()/1000;
 		String expectedRecord = queryEncoder.createEventQuery(eventName, null, identity, timestamp);
 		
-		ArchiverImpl.sharedArchiver().archiveEventOnce(eventName);
+		ArchiverImpl.sharedArchiver().archiveEvent(eventName, null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
 		
 		assertEquals("archiveRecordOnce adds an event to the sendQueue when the event is unique", expectedRecord, ArchiverImpl.sharedArchiver().getQueryString(0));
 	}
@@ -918,18 +996,18 @@ public class ArchiverImplActTest extends ActivityTestCase {
 		
 		String eventNameString = "uniqueRecord";
 	
-		ArchiverImpl.sharedArchiver().archiveEventOnce(eventNameString);
-		ArchiverImpl.sharedArchiver().archiveEventOnce(eventNameString);
-		ArchiverImpl.sharedArchiver().archiveEventOnce(eventNameString);
+		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
+		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
+		ArchiverImpl.sharedArchiver().archiveEvent(eventNameString, null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
 		
 		assertEquals("archiveRecordOnce must not archive subsequent calls to record the same event name", 1, ArchiverImpl.sharedArchiver().getQueueCount());
 	}
 	
 	
 	public final void testArchiveRecordOnceAllowedAfterClearingSavedEvents() {
-		ArchiverImpl.sharedArchiver().archiveEventOnce("eventName");
-		ArchiverImpl.sharedArchiver().clearSavedEvents();
-		ArchiverImpl.sharedArchiver().archiveEventOnce("eventName");
+		ArchiverImpl.sharedArchiver().archiveEvent("eventName", null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
+		ArchiverImpl.sharedArchiver().clearSavedIdEvents();
+		ArchiverImpl.sharedArchiver().archiveEvent("eventName", null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
 		
 		assertEquals("archiveRecordOnce allows for recording unique events of the same name after clearing saved events", 2, ArchiverImpl.sharedArchiver().getQueueCount());
 	}
@@ -984,47 +1062,79 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	
 	
 	@SuppressWarnings("unchecked")
-	public final void testArchiveSavedEvents() {
+	public final void testArchiveSavedIdEvents() {
 
-		List<String> savedEvents = this.uth_getSavedEvents();
-		savedEvents.add("testEvent");
+		List<String> savedIdEvents = this.uth_getSavedIdEvents();
+		savedIdEvents.add("testIdEvent");
 		
-		this.uth_archiveSavedEvents();
+		this.uth_archiveSavedIdEvents();
 		
 		// Read from the file system directly
-		List<String> archivedEvents = (List<String>) this.uth_getInternalStorageObjectOfType(ArrayList.class, getInstrumentation().getTargetContext(), "KISSmetricsSavedEvents");
+		List<String> archivedIdEvents = (List<String>) this.uth_getInternalStorageObjectOfType(ArrayList.class, getInstrumentation().getTargetContext(), "KISSmetricsSavedEvents");
 
-		assertEquals("archiveSavedEvents must retain integrity upon archiving", savedEvents, archivedEvents);
+		assertEquals("archiveSavedEvents must retain integrity upon archiving", savedIdEvents, archivedIdEvents);
 	}
 	
 	
-	public final void testUnarchiveSavedEvents() {
+	public final void testUnarchiveSavedIdEvents() {
 		
 		// Populate and directly archive the test events
-		List<String> expectedEvents = new ArrayList<String>();
-		expectedEvents.add("testEvent");
+		List<String> expectedIdEvents = new ArrayList<String>();
+		expectedIdEvents.add("testIdEvent");
 	
 		// Write to the file system directly
-		uth_writeObjectToInternalStorageFile(expectedEvents, "KISSmetricsSavedEvents");
+		uth_writeObjectToInternalStorageFile(expectedIdEvents, "KISSmetricsSavedEvents");
 		
 		// Unarchive saved events
-		uth_unarchiveSavedEvents();
-		List<String> savedEvents = uth_getSavedEvents();
+		uth_unarchiveSavedIdEvents();
+		List<String> savedEvents = uth_getSavedIdEvents();
 		
-		assertEquals("archiveSavedEvents must retain integrity upon unarchiving", expectedEvents, savedEvents);
+		assertEquals("archiveSavedEvents must retain integrity upon unarchiving", expectedIdEvents, savedEvents);
 	}
 	
 	
-	public final void testClearSavedEvents() {
+	public final void testClearSavedIdEvents() {
 		
-		List<String> savedEvents = this.uth_getSavedEvents();
-		savedEvents.add("testEvent");
+		List<String> savedIdEvents = this.uth_getSavedIdEvents();
+		savedIdEvents.add("testIdEvent");
 		
-		this.uth_archiveSavedEvents();
+		this.uth_archiveSavedIdEvents();
 		
-		ArchiverImpl.sharedArchiver().clearSavedEvents();
+		ArchiverImpl.sharedArchiver().clearSavedIdEvents();
 		
-		assertEquals("clearSavedEvents empties the savedEvents array", 0, this.uth_getSavedEvents().size());
+		assertEquals("clearSavedIdEvents empties the savedEvents array", 0, this.uth_getSavedIdEvents().size());
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public final void testArchiveSavedInstallEvents() {
+
+		List<String> savedInstallEvents = this.uth_getSavedInstallEvents();
+		savedInstallEvents.add("testInstallEvent");
+		
+		this.uth_archiveSavedInstallEvents();
+		
+		// Read from the file system directly
+		List<String> archivedInstallEvents = (List<String>) this.uth_getInternalStorageObjectOfType(ArrayList.class, getInstrumentation().getTargetContext(), "KISSmetricsSavedInstallEvents");
+
+		assertEquals("archiveSavedInstallEvents must retain integrity upon archiving", savedInstallEvents, archivedInstallEvents);
+	}
+	
+	
+	public final void testUnarchiveSavedInstallEvents() {
+		
+		// Populate and directly archive the test events
+		List<String> expectedInstallEvents = new ArrayList<String>();
+		expectedInstallEvents.add("testInstallEvent");
+	
+		// Write to the file system directly
+		uth_writeObjectToInternalStorageFile(expectedInstallEvents, "KISSmetricsSavedInstallEvents");
+		
+		// Unarchive saved events
+		uth_unarchiveSavedInstallEvents();
+		List<String> savedInstallEvents = uth_getSavedInstallEvents();
+		
+		assertEquals("archiveSavedEvents must retain integrity upon unarchiving", expectedInstallEvents, savedInstallEvents);
 	}
 	
 	

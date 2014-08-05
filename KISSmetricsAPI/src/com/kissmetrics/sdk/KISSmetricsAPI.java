@@ -36,6 +36,12 @@ import android.util.Log;
  */
 public final class KISSmetricsAPI implements VerificationDelegate {
 
+	public enum RecordCondition {
+		RECORD_ALWAYS,
+		RECORD_ONCE_PER_INSTALL,
+		RECORD_ONCE_PER_IDENTITY
+	}
+	
 	private static final long FAILSAFE_MAX_VERIFICATION_DUR = 1209600000L; // 14 days
 	
 	private static KISSmetricsAPI sharedAPI = null;
@@ -270,13 +276,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	// TODO: We should allow for recording properties as numbers or strings.
 	public void record(final String name,
 			final HashMap<String, String> properties) {
-		dataExecutor.execute(trackingRunnables.record(name, properties,
-				ArchiverImpl.sharedArchiver(), this));
-
-		// The main activity's onCreate method will likely not be called
-		// frequently enough to re-verify.
-		// In most cases this will only be checking the expiration date.
-		verifyForTracking();
+		record(name, properties, RecordCondition.RECORD_ALWAYS);
 	}
 
 	/**
@@ -286,20 +286,56 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 *            Event name
 	 */
 	public void record(final String name) {
-		record(name, null);
+		record(name, null, RecordCondition.RECORD_ALWAYS);
 	}
-
+	
 	/**
-	 * Records an event only once per identity.
+	 * Records an event per identity or install depending on the RecordCondition that's passed.
 	 * 
 	 * @param name
-	 *            Event Name
+	 *            Event name
+	 * @param properties
+	 *            Event properties or null
+	 * @param condition
+	 * 			  RecordCondition (RecordOncePerInstall, RecordOncePerIdentity).
+	 * 				- Using RecordOncePerInstall: The event will only be recorded once 
+	 * 				during the lifetime of the application's installation. If the event 
+	 * 				has already been recorded, any properties passed will also be ignored.
+	 * 				- Using RecordOncePerIdentity: The event will only be recorded once 
+	 * 				until the identity changes or is cleared via clearIdentity. If the 
+	 * 				event has already been recorded, any properties passed will also be 
+	 * 				ignored.
 	 */
-	public void recordOnce(final String name) {
-		dataExecutor.execute(trackingRunnables.recordOnce(name,
+	public void record(final String name, final HashMap<String, String> properties, RecordCondition condition) {
+		dataExecutor.execute(trackingRunnables.record(name, properties, condition,
 				ArchiverImpl.sharedArchiver(), this));
-	}
 
+		// The main activity's onCreate method will likely not be called
+		// frequently enough to re-verify.
+		// In most cases this will only be checking the expiration date.
+		verifyForTracking();
+	}
+	
+	/**
+	 * Convenience method for recording an event on a RecordCondition without properties.
+	 * 
+	 * @param name
+	 *            Event name
+	 * @param condition
+	 * 			  RecordCondition (RecordOncePerInstall, RecordOncePerIdentity).
+	 * 				- Using RecordOncePerInstall: The event will only be recorded once 
+	 * 				during the lifetime of the application's installation. If the event 
+	 * 				has already been recorded, any properties passed will also be ignored.
+	 * 				- Using RecordOncePerIdentity: The event will only be recorded once 
+	 * 				until the identity changes or is cleared via clearIdentity. If the 
+	 * 				event has already been recorded, any properties passed will also be 
+	 * 				ignored.
+	 * 				
+	 */
+	public void record(final String name, RecordCondition condition) {
+		record(name, null, condition);
+	}
+	
 	/**
 	 * Sets one or more properties.
 	 * 
@@ -487,6 +523,22 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 		record(name, properties);
 	}
 
+	/**
+	 * @deprecated use {@link record(String name, HashMap<String, String>
+	 *             properties), RecordCondition condition} instead. 'recordOnce' 
+	 *             would only restrict the recording of events per identity. A 
+	 *             more flexible solution was needed to allow recording of 
+	 *             events once per installation or identity.
+	 * 
+	 * @param name
+	 *            Event name
+	 */
+	@Deprecated
+	public void recordOnce(final String name) {
+		dataExecutor.execute(trackingRunnables.recordOnce(name,
+				ArchiverImpl.sharedArchiver(), this));
+	}
+	
 	/**
 	 * @deprecated use {@link set(HashMap<String, String> properties)} instead.
 	 *             'setProperties' method name has been changed to 'set' for

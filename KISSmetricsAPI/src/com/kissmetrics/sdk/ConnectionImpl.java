@@ -76,7 +76,7 @@ public class ConnectionImpl implements Connection {
 			connection.setUseCaches(false);
 			connection.setRequestMethod("GET");
 			connection.setConnectTimeout(CONNECTION_TIMEOUT*1000);
-			connection.setRequestProperty("User-Agent", "KISSmetrics-Android/2.0.5");
+			connection.setRequestProperty("User-Agent", "KISSmetrics-Android/2.1.0");
 			// TODO: Apply any easily obtainable device/OS info to the user agent value 
 			
 			// addressing java.io.EOFException

@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -41,7 +43,7 @@ import android.util.Log;
 public class ArchiverImpl implements Archiver {
 
 	private static final String  CLIENT_TYPE = "mobile_app";
-	private static final String  USER_AGENT = "kissmetrics-android/2.0.5";
+	private static final String  USER_AGENT = "kissmetrics-android/2.1.0";
 	private static final String  IDENTITY_PREF = "KISSmetricsIdentity";
 	private static final String  SETTINGS_FILE = "KISSmetricsSettings";
 	private static final String  INSTALL_UUID_KEY = "installUuid";
@@ -52,7 +54,8 @@ public class ArchiverImpl implements Archiver {
 	private static final String  BASE_URL_KEY = "baseUrl";
 	private static final String  APP_VERSION_KEY = "appVersionKey";
 	private static final String  ACTIONS_FILE = "KISSmetricsActions";
-	private static final String  SAVED_EVENTS_FILE = "KISSmetricsSavedEvents";
+	private static final String  SAVED_ID_EVENTS_FILE = "KISSmetricsSavedEvents";
+	private static final String  SAVED_INSTALL_EVENTS_FILE = "KISSmetricsSavedInstallEvents";
 	private static final String  SAVED_PROPERTIES_FILE = "KISSmetricsSavedProperties";
 	private static final long    VERIFICATION_EXP_DATE_DEFAULT = 0L;
 	private static final boolean HAS_GENERIC_IDENTITY_DEFAULT = false;
@@ -68,7 +71,8 @@ public class ArchiverImpl implements Archiver {
 	private HashMap<String, Object> settings;
 	private String lastIdentity;
 	private List<String> sendQueue;
-	private List<String> savedEvents;
+	private List<String> savedIdEvents;
+	private List<String> savedInstallEvents;
 	private HashMap<String, String> savedProperties;
 	
 
@@ -88,7 +92,8 @@ public class ArchiverImpl implements Archiver {
 			unarchiveSettings();
 			unarchiveIdentity();
 			unarchiveSendQueue();
-			unarchiveSavedEvents();
+			unarchiveSavedInstallEvents();
+			unarchiveSavedIdEvents();
 			unarchiveSavedProperties();
 		}
 	}
@@ -218,53 +223,105 @@ public class ArchiverImpl implements Archiver {
 
     
 	/**
-	 * Unarchives saved events from Internal Storage or establishes a new List object. 
-	 * Sets value of mSavedEvents with unarchived saved events.
+	 * Unarchives saved install events from Internal Storage or establishes a new List object. 
+	 * Sets value of mSavedInstallEvents with unarchived saved events.
 	 * 
 	 * Suppresses warnings for ObjectInputStream readObject cast to List<String>.
 	 */
     @SuppressWarnings("unchecked")
-    private void unarchiveSavedEvents() {
+    private void unarchiveSavedInstallEvents() {
     	
     	// Not synch'd as should always be called inside of a sync block !!
     	try {
-        	FileInputStream fis = this.context.openFileInput(SAVED_EVENTS_FILE);
+        	FileInputStream fis = this.context.openFileInput(SAVED_INSTALL_EVENTS_FILE);
         	ObjectInputStream ois = new ObjectInputStream(fis);
-        	this.savedEvents = (List<String>) ois.readObject();
+        	this.savedInstallEvents = (List<String>) ois.readObject();
         	ois.close();
         } catch (Exception e) {
         	// The KISSmetrics SDK should not cause a customer's app to crash.
-        	// If a FileNotFoundException or IOException arises we define mSavedEvents as a new
-        	// ArrayList and carry on.
-        	Log.w("KISSmetricsAPI", "Unable to unarchive saved events");
+        	// If a FileNotFoundException or IOException arises we define mSavedInstallEvents 
+        	// as a new ArrayList and carry on.
+        	Log.w("KISSmetricsAPI", "Unable to unarchive saved install events");
         }
         	
-        if (this.savedEvents == null) {
+        if (this.savedInstallEvents == null) {
         	// The file doesn't exist yet or there was an error in reading the file. 
-    		// Create the savedEvents file with a new Array List.
-        	this.savedEvents = new ArrayList<String>();
-        	this.archiveSavedEvents();
+    		// Create the savedInstallEvents file with a new Array List.
+        	this.savedInstallEvents = new ArrayList<String>();
+        	this.archiveSavedInstallEvents();
         }
     }
     
     
     /**
-     * Archives mSavedEvents from Internal Storage.
+     * Archives mSavedInstallEvents from Internal Storage.
      */
-    private void archiveSavedEvents() {
+    private void archiveSavedInstallEvents() {
     	
     	// Not synch'd as should always be called inside of a sync block !!
     	try {
-    		FileOutputStream fos = this.context.openFileOutput(SAVED_EVENTS_FILE, 
+    		FileOutputStream fos = this.context.openFileOutput(SAVED_INSTALL_EVENTS_FILE, 
     															Context.MODE_PRIVATE);
     		ObjectOutputStream oos = new ObjectOutputStream(fos);
-    		oos.writeObject(this.savedEvents);
+    		oos.writeObject(this.savedInstallEvents);
     		oos.flush();
     		oos.close();
     	} catch (Exception e) {
     		// The KISSmetrics SDK should not cause a customer's app to crash.
     		// If a FileNotFoundException or IOException arises we ignore it.
-    		Log.w("KISSmetricsAPI", "Unable to archive saved events");
+    		Log.w("KISSmetricsAPI", "Unable to archive saved install events");
+    	}
+    }
+    
+    
+	/**
+	 * Unarchives saved events from Internal Storage or establishes a new List object. 
+	 * Sets value of mSavedIdEvents with unarchived saved events.
+	 * 
+	 * Suppresses warnings for ObjectInputStream readObject cast to List<String>.
+	 */
+    @SuppressWarnings("unchecked")
+    private void unarchiveSavedIdEvents() {
+    	
+    	// Not synch'd as should always be called inside of a sync block !!
+    	try {
+        	FileInputStream fis = this.context.openFileInput(SAVED_ID_EVENTS_FILE);
+        	ObjectInputStream ois = new ObjectInputStream(fis);
+        	this.savedIdEvents = (List<String>) ois.readObject();
+        	ois.close();
+        } catch (Exception e) {
+        	// The KISSmetrics SDK should not cause a customer's app to crash.
+        	// If a FileNotFoundException or IOException arises we define mSavedIdEvents as a new
+        	// ArrayList and carry on.
+        	Log.w("KISSmetricsAPI", "Unable to unarchive saved identity events");
+        }
+        	
+        if (this.savedIdEvents == null) {
+        	// The file doesn't exist yet or there was an error in reading the file. 
+    		// Create the savedIdEvents file with a new Array List.
+        	this.savedIdEvents = new ArrayList<String>();
+        	this.archiveSavedIdEvents();
+        }
+    }
+    
+    
+    /**
+     * Archives mSavedIdEvents from Internal Storage.
+     */
+    private void archiveSavedIdEvents() {
+    	
+    	// Not synch'd as should always be called inside of a sync block !!
+    	try {
+    		FileOutputStream fos = this.context.openFileOutput(SAVED_ID_EVENTS_FILE, 
+    															Context.MODE_PRIVATE);
+    		ObjectOutputStream oos = new ObjectOutputStream(fos);
+    		oos.writeObject(this.savedIdEvents);
+    		oos.flush();
+    		oos.close();
+    	} catch (Exception e) {
+    		// The KISSmetrics SDK should not cause a customer's app to crash.
+    		// If a FileNotFoundException or IOException arises we ignore it.
+    		Log.w("KISSmetricsAPI", "Unable to archive saved identity events");
     	}
     }
     
@@ -293,7 +350,7 @@ public class ArchiverImpl implements Archiver {
     	
     	if (this.savedProperties == null) {
     		// The file doesn't exist yet or there was an error in reading the file. 
-    		// Create the savedEvents file with a new HashMap.
+    		// Create the savedProperties file with a new HashMap.
     		this.savedProperties = new HashMap<String, String>();
     		this.archiveSavedProperties();
     	}
@@ -519,6 +576,54 @@ public class ArchiverImpl implements Archiver {
     	}
     }
    
+    public void archiveEvent(final String name, final HashMap<String, String> properties, RecordCondition condition) {
+    	
+    	if (name == null || name.length() == 0) {
+    		Log.w("KISSmetricsAPI", 
+    			  "Attempted to record an event with null or empty event name. Ignoring");
+    		return;
+    	}
+    	
+    	switch (condition) {
+    	
+    		case RECORD_ALWAYS: 
+        		// Nothing else to check, continue with archiving.
+        		break;
+        		
+        	case RECORD_ONCE_PER_IDENTITY:
+        		
+        		synchronized (this) {
+        			if (this.savedIdEvents != null && this.savedIdEvents.contains(name)) {
+        				// Recorded event already exists
+        				return;
+            		} else {
+            			this.savedIdEvents.add(name);
+            			archiveSavedIdEvents();
+            		}
+        		}
+        		break;
+        		
+        	case RECORD_ONCE_PER_INSTALL:
+        		synchronized (this) {
+        			if (this.savedInstallEvents != null && this.savedInstallEvents.contains(name)) {
+        				// Recorded event already exists
+        				return;
+        			} else {
+            			this.savedInstallEvents.add(name);
+            			archiveSavedInstallEvents();
+            		}
+        		}
+        		break;
+        		
+        	default: 
+        		// Continue with archiving the event.
+        		break;
+    	}
+   
+    	// Intentionally called outside of synchronized, method is already synchronized.
+    	archiveEvent(name, properties);
+    }
+    
     
     /**
      * Adds an event (with or without properties) to the sendQueue.
@@ -527,14 +632,8 @@ public class ArchiverImpl implements Archiver {
      * @param name  Name of the event to record
      * @param properties  A HashMap of 1 or more properties, or null
      */
-    public void archiveEvent(final String name, final HashMap<String, String> properties) {
-    	
-    	if (name == null || name.length() == 0) {
-    		Log.w("KISSmetricsAPI", 
-    			  "Attempted to record an event with null or empty event name. Ignoring");
-    		return;
-    	}
-    	
+    private void archiveEvent(final String name, final HashMap<String, String> properties) {
+
     	synchronized (this) {
 			String theUrl = this.queryEncoder.createEventQuery(name, properties, 
 																this.lastIdentity, 
@@ -543,33 +642,6 @@ public class ArchiverImpl implements Archiver {
 			archiveSendQueue();
 		}
     }
-    
-    
-    /**
-     * Adds an event (without properties) to the sendQueue if the event name has not already been 
-     * called for the current user.
-     * Archives the updated sendQueue to Internal Storage.
-     * Adds this event to mSavedEvents and archives to savedEvents.
-     * 
-     * @param name  Event name
-     */
-    public void archiveEventOnce(final String name) {
-    	
-    	synchronized (this) {
-			
-    		if (this.savedEvents != null && this.savedEvents.contains(name)) {
-    			// Recorded event already exists
-    			return;
-    		} else {
-    			this.savedEvents.add(name);
-    			archiveSavedEvents();
-    		}
-		}
-    	
-    	// Pass it to the archive method.
-    	// Intentionally called outside of synchronized block.
-    	archiveEvent(name, null);
-    } 
     
     
     /**
@@ -663,7 +735,7 @@ public class ArchiverImpl implements Archiver {
 			else {
 				// This is expected to be an entirely different user.
 				// Clear saved Events and Properties just as we would when clearing an Identity
-				this.clearSavedEvents();
+				this.clearSavedIdEvents();
 				this.clearSavedProperties();
 			}
     	}
@@ -709,13 +781,13 @@ public class ArchiverImpl implements Archiver {
     
     
     /**
-     * Replaces mSavedEvents with a new(empty) List.
-     * Archives the updated savedEvents to Internal Storage.
+     * Replaces mSavedIdEvents with a new(empty) List.
+     * Archives the updated savedIdEvents to Internal Storage.
      */
-    public void clearSavedEvents() {
+    public void clearSavedIdEvents() {
     	
     	synchronized (this) {
-    		this.savedEvents = new ArrayList<String>();
+    		this.savedIdEvents = new ArrayList<String>();
     		archiveSavedProperties();
     	}
     }

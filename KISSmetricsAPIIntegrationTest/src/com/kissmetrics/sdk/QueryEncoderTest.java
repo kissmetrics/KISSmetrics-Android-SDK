@@ -35,7 +35,7 @@ public class QueryEncoderTest extends AndroidTestCase {
 	
 	static String key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 	static String clientType = "mobile_app";
-	static String userAgent = "android+2.0.5";
+	static String userAgent = "android+2.1.0";
 	static String baseUrl = "https://trk.kissmetrics.com";
 	
 	static String reservedString = "!*'();:@&=+$,/?#[]";
@@ -169,7 +169,7 @@ public class QueryEncoderTest extends AndroidTestCase {
 
 	    String createdQuery = cut.createEventQuery(event, properties, identity, timestamp);
 	    
-	    String expectedQuery = "/e?_k=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&_c=mobile_app&_u=android+2.0.5&_p=testuser%40example.com";
+	    String expectedQuery = "/e?_k=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&_c=mobile_app&_u=android+2.1.0&_p=testuser%40example.com";
 
 	    expectedQuery += "&_n=testEvent";
 	    expectedQuery += ("&_d=1&_t=" + String.valueOf(timestamp));  
@@ -192,7 +192,7 @@ public class QueryEncoderTest extends AndroidTestCase {
 
 	    String createdQuery = cut.createPropertiesQuery(properties, identity, timestamp);
 
-	    String expectedQuery = "/s?_k=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&_c=mobile_app&_u=android+2.0.5&_p=testuser%40example.com&_d=1&_t=";
+	    String expectedQuery = "/s?_k=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&_c=mobile_app&_u=android+2.1.0&_p=testuser%40example.com&_d=1&_t=";
 
 	    expectedQuery = expectedQuery + String.valueOf(timestamp);
 	    expectedQuery = expectedQuery + "&propertyOne=testPropertyOne&propertyTwo=testPropertyTwo";
@@ -210,7 +210,7 @@ public class QueryEncoderTest extends AndroidTestCase {
 	    
 	    String createdQuery = cut.createAliasQuery(oldIdentity, newIdentity);
 
-	    String expectedQuery = "/a?_k=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&_c=mobile_app&_u=android+2.0.5&_p=testolduser%40example.com&_n=testnewuser%40example.com";
+	    String expectedQuery = "/a?_k=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&_c=mobile_app&_u=android+2.1.0&_p=testolduser%40example.com&_n=testnewuser%40example.com";
 	    
 	    assertEquals("URL incorrect", expectedQuery, createdQuery);
 	}
