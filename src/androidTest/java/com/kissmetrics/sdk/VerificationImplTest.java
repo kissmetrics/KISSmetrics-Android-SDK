@@ -170,7 +170,7 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
 		VerificationImpl verificationImpl = new VerificationImpl();
 		
 		// Method under test
-		verificationImpl.verifyTracking("PRODUCTKEYSHOULDNTMATTER", "INSTALLUUIDSHOULDNTMATTER", this);
+		verificationImpl.verifyTracking("://&%^#$^%#&*%^#", "INSTALLUUIDSHOULDNTMATTER", this);
 				
 		// Assert values returned via callback
 		assertEquals("A malformedURL is not successful", false, resultSuccess);
