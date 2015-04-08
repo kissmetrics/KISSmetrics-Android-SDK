@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.io.FileInputStream;
@@ -32,7 +31,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-
 /**
  * ArchiverImpl
  * 
@@ -41,9 +39,7 @@ import android.util.Log;
  * 
  */
 public class ArchiverImpl implements Archiver {
-
 	private static final String  CLIENT_TYPE = "mobile_app";
-	private static final String  USER_AGENT = "kissmetrics-android/2.1.0";
 	private static final String  IDENTITY_PREF = "KISSmetricsIdentity";
 	private static final String  SETTINGS_FILE = "KISSmetricsSettings";
 	private static final String  INSTALL_UUID_KEY = "installUuid";
@@ -74,7 +70,6 @@ public class ArchiverImpl implements Archiver {
 	private List<String> savedIdEvents;
 	private List<String> savedInstallEvents;
 	private HashMap<String, String> savedProperties;
-	
 
 	/**
 	 * Initializes the private singleton.
@@ -86,7 +81,7 @@ public class ArchiverImpl implements Archiver {
 		
 		this.key = key;
 		this.context = applicationContext;
-		this.queryEncoder = new QueryEncoder(this.key, CLIENT_TYPE, USER_AGENT);
+		this.queryEncoder = new QueryEncoder(this.key, CLIENT_TYPE, Connection.USER_AGENT);
 		
 		synchronized (this) {
 			unarchiveSettings();

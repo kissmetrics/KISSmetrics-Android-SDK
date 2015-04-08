@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.util.HashMap;
@@ -31,11 +30,10 @@ import android.util.Log;
  * KISSmetricsAPI
  * 
  * Public API for sending identities, events and properties to KISSmetrics from
- * Android applications. Compatible with Android 2.1+
+ * Android applications. Compatible with Android 2.2+
  * 
  */
 public final class KISSmetricsAPI implements VerificationDelegate {
-
 	public enum RecordCondition {
 		RECORD_ALWAYS,
 		RECORD_ONCE_PER_INSTALL,

@@ -50,7 +50,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
 	static QueryEncoder queryEncoder;
 	
 	static String key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-	static String userAgent = "kissmetrics-android/2.1.0";
+	static String userAgent = Connection.USER_AGENT;
 	static String clientType = "mobile_app";
 	
 
