@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.io.FileInputStream;
@@ -41,7 +40,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.test.ActivityTestCase;
-
 
 /**
  * ArchiverImpl Integration tests
@@ -457,7 +455,6 @@ public class ArchiverImplActTest extends ActivityTestCase {
      * Setup and tear down
      ************************************************/
 	protected void setUp() throws Exception {
-		super.setUp();
 		ArchiverImpl.sharedArchiver(key, getInstrumentation().getTargetContext());
 		
 		// Initialize QueryEncoder

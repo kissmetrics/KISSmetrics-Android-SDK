@@ -15,8 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
+
+import android.test.ActivityTestCase;
 
 import java.io.ByteArrayInputStream;
 import java.net.MalformedURLException;
@@ -27,22 +28,8 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import org.apache.cactus.mock.MockHttpURLConnection;
-import org.junit.After;
-import org.junit.Before;
-
-import android.test.ActivityTestCase;
-
-
-
-// Class under test
-
-// Class test helpers
-import com.kissmetrics.sdk.TestableVerificationImpl;
-import com.kissmetrics.sdk.VerificationDelegate;
-import com.kissmetrics.sdk.VerificationImpl;
 
 public class VerificationImplTest extends ActivityTestCase implements VerificationDelegate {
-	
 	URL testUrl = null;
 	MockHttpURLConnection mockConnection = null;
 	
@@ -50,12 +37,8 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
 	boolean resultDoTrack = false;
 	String resultBaseUrl = null;
 	long resultExpirationDate = 0L;
-	
-	
-	@Before
+
 	protected void setUp() throws Exception {
-		super.setUp();
-		
 		try {
 			testUrl = new URL("http://www.google.com/"); // <- No special url required, just needs to be valid.
 		} catch (MalformedURLException e) {
@@ -64,13 +47,6 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
 		
 		mockConnection = new MockHttpURLConnection(testUrl);
 		mockConnection.setExpectedGetInputStream(new ByteArrayInputStream("".getBytes()));//<- Not always used but required for mock, so empty 
-	}
-	
-	
-	@After
-	protected void tearDown() throws Exception {
-		
-		super.tearDown();
 	}
 	
 	/*
@@ -93,10 +69,8 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
 		
 		return mockDate;
 	}
-	
-	
-	public final void testVerificationResponseFail() {
 
+	public final void testVerificationResponseFail() {
 		// Since we're testing local values set them to the 
 		// incorrect value before we test.
 		resultSuccess = false;
@@ -123,10 +97,8 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
 		assertEquals("A successful response provides a baseUrl tracking endpoint", "", resultBaseUrl);
 		assertEquals("A successful response sets an expiration at or less than 30 days", 0L, resultExpirationDate);
 	}
-	
-	
-	public final void testVerificationResponseTrackingFalse() {
 
+	public final void testVerificationResponseTrackingFalse() {
 		// Since we're testing local values set them to the 
 		// incorrect value before we test.
 		resultSuccess = false;
@@ -156,10 +128,8 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
 		assertEquals("A successful response provides a baseUrl tracking endpoint", "https://trk.kissmetrics.com", resultBaseUrl);
 		assertEquals("A successful response sets an expiration at or less than 30 days", expectedExpirationDate, resultExpirationDate);
 	}
-	
-	
-	public final void testVerificationResponseTrackingTrue() {
 
+	public final void testVerificationResponseTrackingTrue() {
 		// Since we're testing local values set them to the 
 		// incorrect value before we test.
 		resultSuccess = false;
@@ -190,9 +160,7 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
 		assertEquals("Receives expected expiration from headers", expectedExpirationDate, resultExpirationDate);
 	}
 
-
 	public final void testMalformedURL() {
-		
 		resultSuccess = true;
 		resultDoTrack = false;
 		resultBaseUrl = "";
@@ -209,8 +177,7 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
 		assertEquals("A malformedURL does allow tracking", true, resultDoTrack);
 		assertEquals("A malformedURL sets expiration date to 0", 0L, resultExpirationDate);
 	}
-	
-	
+
 	// VerificationImpl uses a callback to return results.
 	// Pickup the completion callback here and record the results.
 	// We'll check these values as part of each test.

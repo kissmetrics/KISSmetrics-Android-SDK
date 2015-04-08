@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.io.BufferedReader;
@@ -29,7 +28,6 @@ import org.json.JSONObject;
 import android.os.Build;
 import android.util.Log;
 
-
 /**
  * VerificationImpl
  * 
@@ -37,12 +35,10 @@ import android.util.Log;
  * 
  */
 class VerificationImpl {
-
 	private static final Integer CONNECTION_TIMEOUT = 20;
 	private final String TRK_URL = "https://et.kissmetrics.com/m/trk";
 	
 	HttpURLConnection connection;
-
 	
 	/**
 	 * Opens a connection from a URL.
@@ -55,7 +51,6 @@ class VerificationImpl {
 	protected HttpURLConnection createHttpURLConnection(URL url) throws IOException{
 		return (HttpURLConnection)url.openConnection();
 	}
-
 	
 	/**
 	 * Makes a request to the provided verification urlString.
@@ -66,7 +61,6 @@ class VerificationImpl {
 	 * @param delegate  VerificationDelegate instance for completion callbacks.
 	 */
 	public void verifyTracking(String productKey, String installUuid, VerificationDelegate delegate) {
-
 		synchronized (this) {
 		
 			Log.v("KISSmetricsAPI", "verifyTracking");
@@ -106,7 +100,6 @@ class VerificationImpl {
 
 				// Parse response for success
 				if (responseCode == 200 || responseCode == 304) {
-				
 					success = true;
 
 					BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));

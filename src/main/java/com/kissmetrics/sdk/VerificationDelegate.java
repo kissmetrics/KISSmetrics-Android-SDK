@@ -24,8 +24,6 @@ package com.kissmetrics.sdk;
  * 
  */
 interface VerificationDelegate {
-	
-	
 	/**
 	 * Callback method for completed HttpURLConnections for KISSmetrics verification queries
 	 *  
