@@ -1,0 +1,73 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+
+  dependencies {
+    classpath 'com.android.tools.build:gradle:1.1.0'
+  }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+  compileSdkVersion 8
+  buildToolsVersion "22.0.1"
+
+  defaultConfig {
+    minSdkVersion 8
+    targetSdkVersion 22
+    versionCode 1
+    versionName "2.2.0"
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+    debug {
+      debuggable true
+    }
+  }
+
+  defaultConfig {
+    testInstrumentationRunner "android.test.InstrumentationTestRunner"
+  }
+
+  testOptions {
+    unitTests.returnDefaultValues = true
+  }
+
+  packagingOptions {
+    exclude 'LICENSE.txt'
+  }
+}
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  //compile 'com.android.support:support-v4:+'
+
+  androidTestCompile group: 'com.android.support.test', name: 'testing-support-lib', version: '+'
+  //androidTestCompile 'com.google.guava:guava:+'
+}
+
+task wrapper(type: org.gradle.api.tasks.wrapper.Wrapper) {
+  gradleVersion = '2.3'
+}
+
+// Take from http://stackoverflow.com/questions/19307341/android-library-gradle-release-jar/19484146#19484146
+android.libraryVariants.all { variant ->
+  def name = variant.buildType.name
+
+  if (name.equals(com.android.builder.core.BuilderConstants.DEBUG)) {
+    return; // Skip debug builds.
+  }
+
+  def task = project.tasks.create "jar${name.capitalize()}", Jar
+  task.dependsOn variant.javaCompile
+  task.from variant.javaCompile.destinationDir
+  artifacts.add('archives', task);
+}
