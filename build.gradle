@@ -17,8 +17,8 @@ android {
   defaultConfig {
     minSdkVersion 8
     targetSdkVersion 22
-    versionCode 1
-    versionName "2.2.0"
+    versionCode 2
+    versionName "2.2.1"
   }
 
   buildTypes {
@@ -48,10 +48,7 @@ repositories {
 }
 
 dependencies {
-  //compile 'com.android.support:support-v4:+'
-
   androidTestCompile group: 'com.android.support.test', name: 'testing-support-lib', version: '+'
-  //androidTestCompile 'com.google.guava:guava:+'
 }
 
 task wrapper(type: org.gradle.api.tasks.wrapper.Wrapper) {
