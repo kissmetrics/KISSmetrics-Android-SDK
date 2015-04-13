@@ -15,13 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.util.concurrent.ExecutorService;
 
 public class Sender implements ConnectionDelegate {
-
 	SenderState state;
 	ExecutorService executorService;
 	ConnectionImpl injectedConnection;
@@ -29,7 +27,6 @@ public class Sender implements ConnectionDelegate {
 	private SenderState readyState;
 	private SenderState sendingState;
 	private SenderState disabledState;
-	
 
 	/*
 	 * Sender constructor
@@ -38,7 +35,6 @@ public class Sender implements ConnectionDelegate {
 	 * 			Used to determine initialized state.
 	 */
 	public Sender(boolean disabled) {
-		
 		readyState = new SenderReadyState(this);
 		sendingState = new SenderSendingState(this);
 		disabledState = new SenderDisabledState(this);
@@ -49,8 +45,7 @@ public class Sender implements ConnectionDelegate {
 			state = readyState;
 		}
 	}
-	
-	
+
 	// Allow use of injectedConnection over new()
 	ConnectionImpl getNewConnection() {
 		if (injectedConnection != null) {
@@ -59,8 +54,6 @@ public class Sender implements ConnectionDelegate {
 		return new ConnectionImpl();
 	}
 
-	
-	// Getters
 	SenderState getReadyState() {
 		return readyState;
 	}
@@ -73,14 +66,11 @@ public class Sender implements ConnectionDelegate {
 		return disabledState;
 	}
 
-
-	//  Setters
 	void setState(SenderState state) {
 		this.state = state;
 	}
-	
-	
-	// Forwarded methods
+
+  // Forwarded methods
 	public void startSending() {
 		synchronized (this) {
 			state.startSending();
@@ -98,7 +88,6 @@ public class Sender implements ConnectionDelegate {
 			state.enableSending();
 		}
 	}
-	
 	
 	// ConnectionDelegate method
 	public void connectionComplete(String urlString, boolean success, boolean malformed) {

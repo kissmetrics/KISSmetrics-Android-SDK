@@ -15,46 +15,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.util.HashMap;
 
 import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
 
-
 /**
  * Archiver interface
  * 
  */
 public interface Archiver {
-
-	public void archiveInstallUuid(final String installUuid);
-	public void archiveDoTrack(final boolean doTrack);
-	public void archiveDoSend(final boolean doSend);
-	public void archiveVerificationExpDate(final long expDate);
-	public void archiveHasGenericIdentity(final boolean hasGenericIdentity);
-	public void archiveAppVersion(final String appVersion);
-	public void archiveFirstIdentity(final String identity);
-	public void archiveEvent(final String name, final HashMap<String, String> properties, RecordCondition condition);
-	public void archiveProperties(final HashMap<String, String> properties);
-	public void archiveDistinctProperty(final String name, final String value);
-	public void archiveIdentity(final String identity);
-	public void archiveAlias(final String alias, final String identity);
+	void archiveInstallUuid(String installUuid);
+	void archiveDoTrack(boolean doTrack);
+	void archiveDoSend(boolean doSend);
+	void archiveVerificationExpDate(long expDate);
+	void archiveHasGenericIdentity(boolean hasGenericIdentity);
+	void archiveAppVersion(String appVersion);
+	void archiveFirstIdentity(String identity);
+	void archiveEvent(String name, HashMap<String, String> properties, RecordCondition condition);
+	void archiveProperties(HashMap<String, String> properties);
+	void archiveDistinctProperty(String name, String value);
+	void archiveIdentity(String identity);
+	void archiveAlias(String alias, String identity);
 	
-	public void clearSendQueue();
-	public void clearSavedIdEvents();
-	public void clearSavedProperties();
-	public String getQueryString(final int index);
-	public void removeQueryString(final int index);
-	public int getQueueCount();
+	void clearSendQueue();
+	void clearSavedIdEvents();
+	void clearSavedProperties();
+	String getQueryString(int index);
+	void removeQueryString(int index);
+	int getQueueCount();
 	
-	public String getInstallUuid();
-	public long getVerificationExpDate();
-	public String getBaseUrl();
-	public String getIdentity();
-	public String getAppVersion();
-	public boolean hasGenericIdentity();
-	public boolean getDoSend();
-	public boolean getDoTrack();
+	String getInstallUuid();
+	long getVerificationExpDate();
+	String getBaseUrl();
+	String getIdentity();
+	String getAppVersion();
+	boolean hasGenericIdentity();
+	boolean getDoSend();
+	boolean getDoTrack();
 }

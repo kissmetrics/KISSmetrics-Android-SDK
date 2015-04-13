@@ -38,7 +38,7 @@ class VerificationImpl {
 	private static final Integer CONNECTION_TIMEOUT = 20;
 	private final String TRK_URL = "https://et.kissmetrics.com/m/trk";
 	
-	HttpURLConnection connection;
+	private HttpURLConnection connection;
 	
 	/**
 	 * Opens a connection from a URL.
