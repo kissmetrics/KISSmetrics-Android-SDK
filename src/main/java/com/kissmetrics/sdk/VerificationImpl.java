@@ -63,7 +63,7 @@ class VerificationImpl {
 	public void verifyTracking(String productKey, String installUuid, VerificationDelegate delegate) {
 		synchronized (this) {
 		
-			Log.v("KISSmetricsAPI", "verifyTracking");
+			Log.v(KISSmetricsAPI.TAG, "verifyTracking");
 		
 			URL url = null;
 			connection = null;
@@ -129,7 +129,7 @@ class VerificationImpl {
 			} catch (Exception e) {
 				// The KISSmetrics SDK should not cause a customer's app to crash.
 				// Log a warning and continue.
-				Log.w("KISSmetricsAPI", "Verification experienced an Exception: " + e);
+				Log.w(KISSmetricsAPI.TAG, "Verification experienced an Exception: " + e);
 			} finally {
 			
 				if (connection != null) {
@@ -141,7 +141,7 @@ class VerificationImpl {
 				if(delegate != null){
 					delegate.verificationComplete(success, doTrack, baseUrl, expirationDate);
 				} else {
-					Log.w("KISSmetricsAPI", "Verification delegate not available");
+					Log.w(KISSmetricsAPI.TAG, "Verification delegate not available");
 				}
 			}
 		}

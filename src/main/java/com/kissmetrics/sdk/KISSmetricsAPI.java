@@ -34,6 +34,8 @@ import android.util.Log;
  * 
  */
 public final class KISSmetricsAPI implements VerificationDelegate {
+  public static final String TAG = "KISSmetricsAPI";
+
 	public enum RecordCondition {
 		RECORD_ALWAYS,
 		RECORD_ONCE_PER_INSTALL,
@@ -152,7 +154,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 */
 	public static synchronized KISSmetricsAPI sharedAPI() {
 		if (sharedAPI == null) {
-			Log.w("KISSmetricsAPI",
+			Log.w(TAG,
 					"KISSMetricsAPI: WARNING - Returning null object in sharedAPI as "
 							+ "sharedAPI(<API_KEY>, <Context>): has not been called.");
 		}

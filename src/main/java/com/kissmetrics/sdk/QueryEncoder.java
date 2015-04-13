@@ -82,7 +82,7 @@ public class QueryEncoder {
 			url = url.replace("+", "%20");
 			
 		} catch (UnsupportedEncodingException e) {
-			Log.w("KISSmetricsAPI", "Unable to url encode string:" + queryString);
+			Log.w(KISSmetricsAPI.TAG, "Unable to url encode string:" + queryString);
 		}
 		
 		return url;
@@ -126,7 +126,7 @@ public class QueryEncoder {
 		for (String stringKey : properties.keySet()) {
 			// Check for valid key
 			if (stringKey.length() == 0) {
-				Log.w("KISSmetricsAPI", 
+				Log.w(KISSmetricsAPI.TAG,
 					    "Property keys must not be empty strings. Dropping property.");
 				continue;
 			}
@@ -134,7 +134,7 @@ public class QueryEncoder {
 			// Check for valid encoded key length
       String escapedKey = encode(stringKey);
       if (escapedKey.length() > 255) {
-        Log.w("KISSmetricsAPI",
+        Log.w(KISSmetricsAPI.TAG,
             "Property key cannot be longer than 255 characters. When URL escaped, " +
             "your key is" + escapedKey.length() + "characters long (the submitted " +
             "value is "+stringKey+", the URL escaped value is "+escapedKey+"). " +
@@ -145,7 +145,7 @@ public class QueryEncoder {
       // Check for valid value
       String stringValue = properties.get(stringKey);
       if (stringValue == null || stringValue.length() == 0) {
-        Log.w("KISSmetricsAPI",
+        Log.w(KISSmetricsAPI.TAG,
             "Property values must not be null or empty strings. Dropping property.");
         continue;
       }

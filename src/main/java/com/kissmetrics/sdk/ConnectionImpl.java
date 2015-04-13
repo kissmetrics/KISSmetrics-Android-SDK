@@ -82,10 +82,10 @@ public class ConnectionImpl implements Connection {
 			connection.connect();
 			
 		} catch (MalformedURLException e) {
-			Log.w("KISSmetricsAPI", "Connection URL was malformed: " + e);
+			Log.w(KISSmetricsAPI.TAG, "Connection URL was malformed: " + e);
 	        malformed = true;
 		} catch (Exception e) {
-			Log.w("KISSmetricsAPI", "Connection experienced an Exception: " + e);
+			Log.w(KISSmetricsAPI.TAG, "Connection experienced an Exception: " + e);
 		} finally {
       if (connection != null) {
         connection.disconnect();
@@ -102,7 +102,7 @@ public class ConnectionImpl implements Connection {
       if (delegate != null) {
         delegate.connectionComplete(urlString, success, malformed);
       } else {
-        Log.w("KISSmetricsAPI", "Connection delegate not available");
+        Log.w(KISSmetricsAPI.TAG, "Connection delegate not available");
       }
     }
   }

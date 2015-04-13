@@ -117,7 +117,7 @@ public class ArchiverImpl implements Archiver {
 	public static synchronized ArchiverImpl sharedArchiver() {
 		
 		if (sharedArchiver == null) {
-			Log.w("KISSmetricsAPI", 
+			Log.w(KISSmetricsAPI.TAG, 
 				  "KISSMetricsAPI: WARNING - Returning null object in sharedAPI as " +
 				  "sharedArchiver(<API_KEY>, <Context>): has not been called.");
 		}
@@ -149,7 +149,7 @@ public class ArchiverImpl implements Archiver {
 			// The KISSmetrics SDK should not cause a customer's app to crash.
 			// If a FileNotFoundException or IOException arises we define default settings 
 			// and carry on. 
-			Log.w("KISSmetricsAPI", "Unable to unarchive saved settings");
+			Log.w(KISSmetricsAPI.TAG, "Unable to unarchive saved settings");
 		}
 		
 		// The file doesn't exist yet or there was an error in reading the file. 
@@ -193,7 +193,7 @@ public class ArchiverImpl implements Archiver {
 		} catch (Exception e) {
 			// The KISSmetrics SDK should not cause a customer's app to crash.
 			// If a FileNotFoundException or IOException arises we ignore it.
-			Log.w("KISSmetricsAPI", "Unable to archive settings");
+			Log.w(KISSmetricsAPI.TAG, "Unable to archive settings");
 		}
 	}
     
@@ -236,7 +236,7 @@ public class ArchiverImpl implements Archiver {
         	// The KISSmetrics SDK should not cause a customer's app to crash.
         	// If a FileNotFoundException or IOException arises we define mSavedInstallEvents 
         	// as a new ArrayList and carry on.
-        	Log.w("KISSmetricsAPI", "Unable to unarchive saved install events");
+        	Log.w(KISSmetricsAPI.TAG, "Unable to unarchive saved install events");
         }
         	
         if (this.savedInstallEvents == null) {
@@ -264,7 +264,7 @@ public class ArchiverImpl implements Archiver {
     	} catch (Exception e) {
     		// The KISSmetrics SDK should not cause a customer's app to crash.
     		// If a FileNotFoundException or IOException arises we ignore it.
-    		Log.w("KISSmetricsAPI", "Unable to archive saved install events");
+    		Log.w(KISSmetricsAPI.TAG, "Unable to archive saved install events");
     	}
     }
     
@@ -288,7 +288,7 @@ public class ArchiverImpl implements Archiver {
         	// The KISSmetrics SDK should not cause a customer's app to crash.
         	// If a FileNotFoundException or IOException arises we define mSavedIdEvents as a new
         	// ArrayList and carry on.
-        	Log.w("KISSmetricsAPI", "Unable to unarchive saved identity events");
+        	Log.w(KISSmetricsAPI.TAG, "Unable to unarchive saved identity events");
         }
         	
         if (this.savedIdEvents == null) {
@@ -316,7 +316,7 @@ public class ArchiverImpl implements Archiver {
     	} catch (Exception e) {
     		// The KISSmetrics SDK should not cause a customer's app to crash.
     		// If a FileNotFoundException or IOException arises we ignore it.
-    		Log.w("KISSmetricsAPI", "Unable to archive saved identity events");
+    		Log.w(KISSmetricsAPI.TAG, "Unable to archive saved identity events");
     	}
     }
     
@@ -340,7 +340,7 @@ public class ArchiverImpl implements Archiver {
     		// The KISSmetrics SDK should not cause a customer's app to crash.
         	// If a FileNotFoundException or IOException arises we define mSavedProperites as a new
         	// HashMap and carry on.
-    		Log.w("KISSmetricsAPI", "Unable to unarchive saved properties");
+    		Log.w(KISSmetricsAPI.TAG, "Unable to unarchive saved properties");
     	}
     	
     	if (this.savedProperties == null) {
@@ -368,7 +368,7 @@ public class ArchiverImpl implements Archiver {
     	} catch (Exception e) {
     		// The KISSmetrics SDK should not cause a customer's app to crash.
     		// If a FileNotFoundException or IOException arises we ignore it.
-    		Log.w("KISSmetricsAPI", "Unable to archive saved properties");
+    		Log.w(KISSmetricsAPI.TAG, "Unable to archive saved properties");
     	}
     }
     
@@ -392,7 +392,7 @@ public class ArchiverImpl implements Archiver {
     		// The KISSmetrics SDK should not cause a customer's app to crash.
         	// If a FileNotFoundException or IOException arises we define mSavedProperites as a new
         	// List<String> and carry on.
-    		Log.w("KISSmetricsAPI", "Unable to unarchive data");
+    		Log.w(KISSmetricsAPI.TAG, "Unable to unarchive data");
     	}
     	
     	if (this.sendQueue == null) {
@@ -417,7 +417,7 @@ public class ArchiverImpl implements Archiver {
     	} catch (Exception e) {
     		// The KISSmetrics SDK should not cause a customer's app to crash.
     		// If a FileNotFoundException or IOException arises we ignore it.
-    		Log.w("KISSmetricsAPI", "Unable to archive data");
+    		Log.w(KISSmetricsAPI.TAG, "Unable to archive data");
     	}
     }
 	
@@ -450,7 +450,7 @@ public class ArchiverImpl implements Archiver {
     		installUuid.length() == 0 || 
     		this.settings.get(INSTALL_UUID_KEY) != null) {
     		
-    		Log.w("KISSmetricsAPI", "installUuid not valid to save");
+    		Log.w(KISSmetricsAPI.TAG, "installUuid not valid to save");
     		return;
     	}
     	
@@ -498,7 +498,7 @@ public class ArchiverImpl implements Archiver {
     	
     	// Protect from null or empty string
     	if (baseUrl == null || baseUrl.length() == 0) {
-    		Log.w("KISSmetricsAPI", "baseUrl not valid to save");
+    		Log.w(KISSmetricsAPI.TAG, "baseUrl not valid to save");
     		return;
     	}
     	
@@ -574,7 +574,7 @@ public class ArchiverImpl implements Archiver {
     public void archiveEvent(final String name, final HashMap<String, String> properties, RecordCondition condition) {
     	
     	if (name == null || name.length() == 0) {
-    		Log.w("KISSmetricsAPI", 
+    		Log.w(KISSmetricsAPI.TAG, 
     			  "Attempted to record an event with null or empty event name. Ignoring");
     		return;
     	}
@@ -648,7 +648,7 @@ public class ArchiverImpl implements Archiver {
     public void archiveProperties(final HashMap<String, String> properties) {
 
     	if (properties == null || properties.isEmpty()) {
-    		Log.w("KISSmetricsAPI", 
+    		Log.w(KISSmetricsAPI.TAG, 
     			  "Attempted to set properties with no properties in it. Ignoring");
     		return;
     	}
@@ -677,7 +677,7 @@ public class ArchiverImpl implements Archiver {
     		
     		String propertyValue = this.savedProperties.get(name);
     		if (propertyValue != null && propertyValue.equals(value)) {
-        		//Log.w("KISSmetricsAPI", "Distinct property already set with same value");
+        		//Log.w(KISSmetricsAPI.TAG, "Distinct property already set with same value");
         		return;
     		} else {
     			this.savedProperties.put(name, value);
@@ -704,7 +704,7 @@ public class ArchiverImpl implements Archiver {
     public void archiveIdentity(final String identity) {
     	
     	if (identity == null || identity.length() == 0 || identity.equals(this.lastIdentity)) {
-    		Log.w("KISSmetricsAPI", "Attempted to use null, empty or existing identity. Ignoring");
+    		Log.w(KISSmetricsAPI.TAG, "Attempted to use null, empty or existing identity. Ignoring");
     		return;
     	}
     	
@@ -747,7 +747,7 @@ public class ArchiverImpl implements Archiver {
     public void archiveAlias(final String alias, final String identity) {
     	
     	if (alias == null || alias.length() == 0 || identity == null || identity.length() == 0) {
-    		Log.w("KISSmetricsAPI", 
+    		Log.w(KISSmetricsAPI.TAG, 
     			  "Attempted to use null or empty identities in " +
     			  "alias ("+alias+" and "+identity+"). Ignoring.");
     		return;
