@@ -48,10 +48,7 @@ repositories {
 }
 
 dependencies {
-  //compile 'com.android.support:support-v4:+'
-
   androidTestCompile group: 'com.android.support.test', name: 'testing-support-lib', version: '+'
-  //androidTestCompile 'com.google.guava:guava:+'
 }
 
 task wrapper(type: org.gradle.api.tasks.wrapper.Wrapper) {
