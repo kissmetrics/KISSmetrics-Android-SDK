@@ -82,10 +82,10 @@ public class ConnectionImpl implements Connection {
 			connection.connect();
 			
 		} catch (MalformedURLException e) {
-			Log.w(KISSmetricsAPI.TAG, "Connection URL was malformed: " + e);
+			Log.w(KISSmetricsAPI.TAG, "Connection URL was malformed", e);
 	        malformed = true;
 		} catch (Exception e) {
-			Log.w(KISSmetricsAPI.TAG, "Connection experienced an Exception: " + e);
+			Log.w(KISSmetricsAPI.TAG, "Connection experienced an Exception", e);
 		} finally {
       if (connection != null) {
         connection.disconnect();

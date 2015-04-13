@@ -82,7 +82,7 @@ public class QueryEncoder {
 			url = url.replace("+", "%20");
 			
 		} catch (UnsupportedEncodingException e) {
-			Log.w(KISSmetricsAPI.TAG, "Unable to url encode string:" + queryString);
+			Log.w(KISSmetricsAPI.TAG, "Unable to url encode string:" + queryString, e);
 		}
 		
 		return url;

@@ -129,7 +129,7 @@ class VerificationImpl {
 			} catch (Exception e) {
 				// The KISSmetrics SDK should not cause a customer's app to crash.
 				// Log a warning and continue.
-				Log.w(KISSmetricsAPI.TAG, "Verification experienced an Exception: " + e);
+				Log.w(KISSmetricsAPI.TAG, "Verification experienced an Exception.", e);
 			} finally {
 			
 				if (connection != null) {
