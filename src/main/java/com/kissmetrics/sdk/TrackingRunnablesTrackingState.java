@@ -15,13 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.util.HashMap;
 
 import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
-
 
 /**
  * TrackingRunnables tracking state
@@ -30,8 +28,6 @@ import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
  * 
  */
 public class TrackingRunnablesTrackingState implements TrackingRunnables {
-	
-	
 	/**
 	 * Creates a Runnable to archive and send an identity.
 	 * 
@@ -40,9 +36,10 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will archive and send an identity.
 	 */
-	public Runnable identify(final String identity, final Archiver archiver, 
-							 final KISSmetricsAPI kmapi) {
-		
+	public Runnable identify(final String identity,
+                           final Archiver archiver,
+                           final KISSmetricsAPI kmapi)
+  {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveIdentity(identity);
@@ -52,8 +49,7 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		
 		return runnable;
 	}
-	
-	
+
 	/**
 	 * Creates a Runnable to archive and send an alias.
 	 * 
@@ -63,9 +59,11 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will archive and send an alias.
 	 */
-	public Runnable alias(final String alias, final String identity, final Archiver archiver, 
-						  final KISSmetricsAPI kmapi) {
-	
+	public Runnable alias(final String alias,
+                        final String identity,
+                        final Archiver archiver,
+						            final KISSmetricsAPI kmapi)
+  {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveAlias(alias, identity);
@@ -76,16 +74,14 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		return runnable;	
 	}
 
-	
 	/**
 	 * Creates a Runnable to archive an unassociated user identity. 
 	 * 
-	 * @param identity  User identity String.
+	 * @param newIdentity  User identity String.
 	 * @param archiver  The instance of Archiver to use.
 	 * @return A Runnable object that will archive a new unassociated identity.
 	 */
 	public Runnable clearIdentity(final String newIdentity, final Archiver archiver) {
-		
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveFirstIdentity(newIdentity);
@@ -96,7 +92,6 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		
 		return runnable;	
 	}
-	
 
 	/**
 	 * Creates a Runnable to archive and send an event with or without properties(null).
@@ -108,10 +103,12 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will archive and send an event.
 	 */
-	public Runnable record(final String name, final HashMap<String, String> properties, 
-						   final RecordCondition condition, final Archiver archiver, 
-						   final KISSmetricsAPI kmapi)	{
-		
+	public Runnable record(final String name,
+                         final HashMap<String, String> properties,
+						             final RecordCondition condition,
+                         final Archiver archiver,
+						             final KISSmetricsAPI kmapi)
+  {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveEvent(name, properties, condition);	
@@ -122,7 +119,6 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		return runnable;
 	}
 
-	
 	/**
 	 * Creates a Runnable to archive and send an event only once per identity.
 	 * 
@@ -132,9 +128,10 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 	 * @return A Runnable object that will archive and send an event only if the event has never 
 	 *         been recorded for the current identity.
 	 */
-	public Runnable recordOnce(final String name, final Archiver archiver, 
-							   final KISSmetricsAPI kmapi){
-		
+	public Runnable recordOnce(final String name,
+                             final Archiver archiver,
+							               final KISSmetricsAPI kmapi)
+  {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveEvent(name, null, RecordCondition.RECORD_ONCE_PER_IDENTITY);
@@ -144,7 +141,6 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		
 		return runnable;
 	}
-	
 
 	/**
 	 * Creates a Runnable to archive and send 1 or more user properties.
@@ -154,9 +150,10 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will archive and send 1 or more properties.
 	 */
-	public Runnable set(final HashMap<String, String> properties, final Archiver archiver, 
-						final KISSmetricsAPI kmapi){
-	
+	public Runnable set(final HashMap<String, String> properties,
+                      final Archiver archiver,
+						          final KISSmetricsAPI kmapi)
+  {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveProperties(properties);
@@ -166,7 +163,6 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 		
 		return runnable;
 	}
-	
 
 	/**
 	 * Creates a Runnable to archive and send properties with a new or different value for the 
@@ -178,9 +174,11 @@ public class TrackingRunnablesTrackingState implements TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will archive and send a distinct property. 
 	 */
-	public Runnable setDistinct(final String key, final String value, final Archiver archiver, 
-								final KISSmetricsAPI kmapi){
-	
+	public Runnable setDistinct(final String key,
+                              final String value,
+                              final Archiver archiver,
+								              final KISSmetricsAPI kmapi)
+  {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				archiver.archiveDistinctProperty(key, value);

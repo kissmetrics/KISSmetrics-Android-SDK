@@ -15,22 +15,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class SenderSendingState implements SenderState {
-	
-	Sender sender;
+	private Sender sender;
 	
 	public SenderSendingState(Sender sender) {
 		this.sender = sender;
 	}
 	
 	private void sendTopRecord() {
-		
 		// Assemble the full query string by prepending the current baseUrl as last archived.
 		String apiQuery = ArchiverImpl.sharedArchiver().getBaseUrl()+ArchiverImpl.sharedArchiver().getQueryString(0);
 		ConnectionImpl connection = sender.getNewConnection();
@@ -38,24 +35,23 @@ public class SenderSendingState implements SenderState {
 	}
 	
 	private void shutdownExecutor(final ExecutorService es) {
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      public void run() {
+        es.shutdown();
 
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-		    public void run() {
-		        es.shutdown();
-
-		        try {
-					if (!es.awaitTermination(60, TimeUnit.SECONDS)) {
-						es.shutdownNow();
-					}
-				} catch (InterruptedException e) {
-					// (Re-)Cancel if current thread also interrupted
-				    es.shutdownNow();
-				    // Preserve interrupt status
-				    Thread.currentThread().interrupt();
-				}
-		    }
-		});
-	}
+        try {
+          if (!es.awaitTermination(60, TimeUnit.SECONDS)) {
+            es.shutdownNow();
+          }
+        } catch (InterruptedException e) {
+          // (Re-)Cancel if current thread also interrupted
+          es.shutdownNow();
+          // Preserve interrupt status
+          Thread.currentThread().interrupt();
+        }
+      }
+    });
+  }
 	
 	public void startSending() {
 		// Ignored. We're already sending.
@@ -79,13 +75,11 @@ public class SenderSendingState implements SenderState {
 	}
 	
 	public void connectionComplete(String urlString, boolean success, boolean malformed) {
-		
 		if (success || malformed) {
 			ArchiverImpl.sharedArchiver().removeQueryString(0);
 		}
 		
 		if (success) {
-			
 			// If there's nothing left to send, switch to the ready state
 			if (ArchiverImpl.sharedArchiver().getQueueCount() == 0) {
 				shutdownExecutor(sender.executorService);

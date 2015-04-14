@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.io.IOException;
@@ -26,7 +25,6 @@ import java.net.URL;
 import android.os.Build;
 import android.util.Log;
 
-
 /**
  * ConnectionImpl 
  * 
@@ -36,8 +34,7 @@ import android.util.Log;
 public class ConnectionImpl implements Connection {
 	private static final Integer CONNECTION_TIMEOUT = 20;
 	
-	HttpURLConnection connection;
-	
+	private HttpURLConnection connection;
 
 	/**
 	 * Opens a connection from a URL.
@@ -50,8 +47,7 @@ public class ConnectionImpl implements Connection {
 	protected HttpURLConnection createHttpURLConnection(URL url) throws IOException{
 		return (HttpURLConnection)url.openConnection();
 	}
-	
-	
+
 	/**
 	 * Makes a request to the provided API query urlString.
 	 * Handles the response and notifies the provided ConnectionDelgate on completion.
@@ -60,7 +56,6 @@ public class ConnectionImpl implements Connection {
 	 * @delegate delegate Object implementing the ConnectionDelegate interface
 	 */
 	public void sendRecord(final String urlString, final ConnectionDelegate delegate) {
-
 		URL url = null;
 		connection = null;
 		
@@ -87,29 +82,28 @@ public class ConnectionImpl implements Connection {
 			connection.connect();
 			
 		} catch (MalformedURLException e) {
-			Log.w("KISSmetricsAPI", "Connection URL was malformed: " + e);
+			Log.w(KISSmetricsAPI.TAG, "Connection URL was malformed", e);
 	        malformed = true;
 		} catch (Exception e) {
-			Log.w("KISSmetricsAPI", "Connection experienced an Exception: " + e);
+			Log.w(KISSmetricsAPI.TAG, "Connection experienced an Exception", e);
 		} finally {
+      if (connection != null) {
+        connection.disconnect();
+        connection = null;
+      }
 
-			if (connection != null) {
-				connection.disconnect();
-				connection = null;
-			}
-	      	
-	      	if (malformed != true && (responseCode == 200 || responseCode == 304)) {
-	      		success = true;
-	        } else {
-	      		success = false;
-	        }
+      if (malformed != true && (responseCode == 200 || responseCode == 304)) {
+        success = true;
+      } else {
+        success = false;
+      }
 
-	      	// Callback to delegate
-	     	if(delegate != null){
-	     		delegate.connectionComplete(urlString, success, malformed);
-	     	} else {
-	     		Log.w("KISSmetricsAPI", "Connection delegate not available");
-	     	}
-	   	}
-	}
+      // Callback to delegate
+      if (delegate != null) {
+        delegate.connectionComplete(urlString, success, malformed);
+      } else {
+        Log.w(KISSmetricsAPI.TAG, "Connection delegate not available");
+      }
+    }
+  }
 }

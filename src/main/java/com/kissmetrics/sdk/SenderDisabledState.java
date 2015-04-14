@@ -15,12 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 public class SenderDisabledState implements SenderState {
-	
-	Sender sender;
+	private Sender sender;
 	
 	public SenderDisabledState(Sender sender) {
 		this.sender = sender;

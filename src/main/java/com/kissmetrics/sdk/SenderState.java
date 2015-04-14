@@ -15,11 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 public interface SenderState extends ConnectionDelegate {
-
 	/**
 	 * Switches to sendingState and starts sending from 
 	 * the top of the send queue if appropriate.

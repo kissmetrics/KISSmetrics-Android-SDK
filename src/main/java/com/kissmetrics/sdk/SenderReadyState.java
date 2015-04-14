@@ -15,21 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.util.concurrent.Executors;
 
 public class SenderReadyState implements SenderState {
-
-	Sender sender;
+	private Sender sender;
 	
 	public SenderReadyState(Sender sender) {
 		this.sender = sender;
 	}
 	
 	private void sendTopRecord() {
-		
 		// Assemble the full query string by prepending the current baseUrl as last archived.
 		String apiQuery = ArchiverImpl.sharedArchiver().getBaseUrl()+ArchiverImpl.sharedArchiver().getQueryString(0);
 		ConnectionImpl connection = sender.getNewConnection();
@@ -37,7 +34,6 @@ public class SenderReadyState implements SenderState {
 	}
 	
 	public void startSending() {
-
 		// Ignore if we have nothing to send
 		if (ArchiverImpl.sharedArchiver().getQueueCount() == 0) {
 			return;
@@ -66,7 +62,6 @@ public class SenderReadyState implements SenderState {
 	}
 	
 	public void disableSending() {
-
 		// Switch to disabled state first so that ConnectionDelegate's 
 		// connectionComplete is handled by the disabled state while we 
 		// clear the send queue.
@@ -81,7 +76,6 @@ public class SenderReadyState implements SenderState {
 	}
 	
 	public void connectionComplete(String urlString, boolean success, boolean malformed) {
-		
 		// Ignored, connectionComplete should only be handled by the sending state.
 		// The only way that this method could be called in this state is if a record 
 		// is being sent at the time that the Sender is disabled and re-enabled.

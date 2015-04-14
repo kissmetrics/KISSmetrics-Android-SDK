@@ -15,9 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
-
 
 /**
  * Verification Delegate interface
@@ -32,6 +30,8 @@ interface VerificationDelegate {
 	 * @param baseUrl  Tracking endpoint URL
 	 * @param expirationDate  Unix timestamp in milliseconds from now.
 	 */
-	void verificationComplete(final boolean success, final boolean doTrack, 
-							  final String baseUrl, final long expirationDate);
+	void verificationComplete(boolean success,
+                            boolean doTrack,
+							              String baseUrl,
+                            long expirationDate);
 }

@@ -15,17 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
-
 
 /**
  * Connection Delegate interface
  * 
  */
 public interface ConnectionDelegate {
-	
-	
 	/**
 	 * Callback method for completed HttpURLConnections of KISSmetrics API queries  
 	 * 

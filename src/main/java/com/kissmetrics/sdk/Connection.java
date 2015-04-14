@@ -15,9 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
-
 
 /**
  * Connection interface
@@ -33,5 +31,5 @@ interface Connection {
 	 * @param urlString  URL encoded API query string
 	 * @delegate delegate Object implementing the ConnectionDelegate interface
 	 */
-	public void sendRecord(String urlString, ConnectionDelegate delegate);
+	void sendRecord(String urlString, ConnectionDelegate delegate);
 }

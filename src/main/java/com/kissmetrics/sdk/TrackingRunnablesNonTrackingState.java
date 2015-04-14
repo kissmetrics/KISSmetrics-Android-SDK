@@ -15,13 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.util.HashMap;
 
 import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
-
 
 /**
  * TrackingRunnables non-tracking state
@@ -30,8 +28,6 @@ import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
  * 
  */
 public class TrackingRunnablesNonTrackingState implements TrackingRunnables {
-
-	
 	/**
 	 * Ignores calls to set a user identity while in a non-tracking state.
 	 * 
@@ -41,7 +37,6 @@ public class TrackingRunnablesNonTrackingState implements TrackingRunnables {
 	 * @return A no action Runnable.
 	 */
 	public Runnable identify(String identity, Archiver archiver, KISSmetricsAPI kmapi) {
-		
 		Runnable runnable = new Runnable() { 
 			public void run() {
 				// No action taken
@@ -51,7 +46,6 @@ public class TrackingRunnablesNonTrackingState implements TrackingRunnables {
 		return runnable;
 	}
 
-	
 	/**
 	 * Ignores calls to set a user alias while in a non-tracking state.
 	 * 
@@ -62,7 +56,6 @@ public class TrackingRunnablesNonTrackingState implements TrackingRunnables {
 	 * @return A no action Runnable.
 	 */
 	public Runnable alias(String alias, String identity, Archiver archiver, KISSmetricsAPI kmapi) {
-		
 		Runnable runnable = new Runnable() { 
 			public void run() {
 				// No action taken
@@ -76,12 +69,11 @@ public class TrackingRunnablesNonTrackingState implements TrackingRunnables {
 	/**
 	 * Ignores calls to archive an unassociated user identity while in a non-tracking state. 
 	 * 
-	 * @param identity  User identity String.
+	 * @param newIdentity  User identity String.
 	 * @param archiver  The instance of Archiver to use.
 	 * @return A no action Runnable.
 	 */
 	public Runnable clearIdentity(String newIdentity, Archiver archiver) {
-		
 		Runnable runnable = new Runnable() { 
 			public void run() {
 				// No action taken
@@ -102,9 +94,12 @@ public class TrackingRunnablesNonTrackingState implements TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A no action Runnable.
 	 */
-	public Runnable record(String name, HashMap<String, String> properties, RecordCondition condition, 
-						   Archiver archiver, KISSmetricsAPI kmapi) {
-		
+	public Runnable record(String name,
+                         HashMap<String, String> properties,
+                         RecordCondition condition,
+						             Archiver archiver,
+                         KISSmetricsAPI kmapi)
+  {
 		Runnable runnable = new Runnable() { 
 			public void run() {
 				// No action taken
@@ -124,7 +119,6 @@ public class TrackingRunnablesNonTrackingState implements TrackingRunnables {
 	 * @return A no action Runnable.
 	 */
 	public Runnable recordOnce(String name, Archiver archiver, KISSmetricsAPI kmapi) {
-		
 		Runnable runnable = new Runnable() { 
 			public void run() {
 				// No action taken
@@ -143,9 +137,10 @@ public class TrackingRunnablesNonTrackingState implements TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A no action Runnable.
 	 */
-	public Runnable set(HashMap<String, String> properties, Archiver archiver, 
-						KISSmetricsAPI kmapi) {
-		
+	public Runnable set(HashMap<String, String> properties,
+                      Archiver archiver,
+						          KISSmetricsAPI kmapi)
+  {
 		Runnable runnable = new Runnable() { 
 			public void run() {
 				// No action taken
@@ -166,7 +161,6 @@ public class TrackingRunnablesNonTrackingState implements TrackingRunnables {
 	 * @return A no action Runnable.
 	 */
 	public Runnable setDistinct(String key, String value, Archiver archiver, KISSmetricsAPI kmapi) {
-		
 		Runnable runnable = new Runnable() { 
 			public void run() {
 				// No action taken

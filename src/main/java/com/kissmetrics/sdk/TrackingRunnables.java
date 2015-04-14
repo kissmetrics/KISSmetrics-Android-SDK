@@ -15,13 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.util.HashMap;
 
 import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
-
 
 /**
  * TrackingRunnables interface
@@ -31,7 +29,6 @@ import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
  * 
  */
 public interface TrackingRunnables {
-	
 	/**
 	 * Creates a Runnable to archive and send an identity for the current tracking state.
 	 * 
@@ -40,9 +37,7 @@ public interface TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will run appropriate tasks for the current tracking state.
 	 */
-	public Runnable identify(final String identity, final Archiver archiver, 
-							 final KISSmetricsAPI kmapi);
-	
+	Runnable identify(String identity, Archiver archiver, KISSmetricsAPI kmapi);
 	
 	/**
 	 * Creates a Runnable to archive and send an alias for the current tracking state.
@@ -53,20 +48,17 @@ public interface TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will run appropriate tasks for the current tracking state.
 	 */
-	public Runnable alias(final String alias, final String identity, final Archiver archiver, 
-						  final KISSmetricsAPI kmapi);
-	
-	
+	Runnable alias(String alias, String identity, Archiver archiver, KISSmetricsAPI kmapi);
+
 	/**
 	 * Creates a Runnable to archive an unassociated user identity for the current tracking state. 
 	 * 
-	 * @param identity  User identity String.
+	 * @param newIdentity  User identity String.
 	 * @param archiver  The instance of Archiver to use.
 	 * @return A Runnable object that will run appropriate tasks for the current tracking state.
 	 */
-	public Runnable clearIdentity(final String newIdentity, final Archiver archiver);
-	
-	
+	Runnable clearIdentity(String newIdentity, Archiver archiver);
+
 	/**
 	 * Creates a Runnable to archive and send an event with or without properties(null) for the
 	 * current tracking state.
@@ -78,10 +70,9 @@ public interface TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will run appropriate tasks for the current tracking state.
 	 */
-	public Runnable record(final String name, final HashMap<String, String> properties, 
-						   RecordCondition condition, final Archiver archiver, 
-						   final KISSmetricsAPI kmapi);
-	
+	Runnable record(String name, HashMap<String, String> properties,
+						      RecordCondition condition, Archiver archiver,
+						      KISSmetricsAPI kmapi);
 	
 	/**
 	 * Creates a Runnable to archive and send an event only once per identity for the current 
@@ -92,10 +83,8 @@ public interface TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will run appropriate tasks for the current tracking state.
 	 */
-	public Runnable recordOnce(final String name, final Archiver archiver, 
-							   final KISSmetricsAPI kmapi);
-	
-	
+	Runnable recordOnce(String name, Archiver archiver, KISSmetricsAPI kmapi);
+
 	/**
 	 * Creates a Runnable to archive and send 1 or more user properties for the current tracking 
 	 * state.
@@ -105,11 +94,8 @@ public interface TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will run appropriate tasks for the current tracking state.
 	 */
-	public Runnable set(final HashMap<String, String> properties, final Archiver archiver, 
-						final KISSmetricsAPI kmapi);
-	
-	
-	
+	Runnable set(HashMap<String, String> properties, Archiver archiver, KISSmetricsAPI kmapi);
+
 	/**
 	 * Creates a Runnable to archive and send properties with a new or different value for the 
 	 * provided key for the current tracking state.
@@ -120,7 +106,5 @@ public interface TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will run appropriate tasks for the current tracking state.
 	 */
-	public Runnable setDistinct(final String key, final String value, final Archiver archiver, 
-								final KISSmetricsAPI kmapi);
-	
+	Runnable setDistinct(String key, String value, Archiver archiver, KISSmetricsAPI kmapi);
 }

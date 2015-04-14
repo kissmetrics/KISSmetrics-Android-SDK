@@ -34,6 +34,8 @@ import android.util.Log;
  * 
  */
 public final class KISSmetricsAPI implements VerificationDelegate {
+  public static final String TAG = "KISSmetricsAPI";
+
 	public enum RecordCondition {
 		RECORD_ALWAYS,
 		RECORD_ONCE_PER_INSTALL,
@@ -52,7 +54,6 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	private Context context;
 
 	protected static Sender sender;
-	
 	
 	/**
 	 * Allows for injection of a mock Verification.
@@ -84,11 +85,10 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 * 
 	 * @param productKey
 	 *            KISSmetrics product key.
-	 * @param context
+	 * @param appContext
 	 *            Android application context.
 	 */
 	private KISSmetricsAPI(final String productKey, final Context appContext) {
-
 		key = productKey;
 		context = appContext;
 
@@ -135,8 +135,9 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 *            Android application context.
 	 * @return KISSmetricsAPI singleton instance.
 	 */
-	public static synchronized KISSmetricsAPI sharedAPI(
-			final String productKey, final Context applicationContext) {
+  public static synchronized KISSmetricsAPI sharedAPI(final String productKey,
+                                                      final Context applicationContext)
+  {
 		if (sharedAPI == null) {
 			sharedAPI = new KISSmetricsAPI(productKey, applicationContext);
 		}
@@ -153,7 +154,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 */
 	public static synchronized KISSmetricsAPI sharedAPI() {
 		if (sharedAPI == null) {
-			Log.w("KISSmetricsAPI",
+			Log.w(TAG,
 					"KISSMetricsAPI: WARNING - Returning null object in sharedAPI as "
 							+ "sharedAPI(<API_KEY>, <Context>): has not been called.");
 		}
@@ -178,7 +179,6 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 * Verifies the KISSmetricsAPI product for tracking asynchronously.
 	 */
 	private void verifyForTracking() {
-
 		if (System.currentTimeMillis() < ArchiverImpl.sharedArchiver()
 				.getVerificationExpDate()) {
 			return;
@@ -186,8 +186,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 
 		new Thread(new Runnable() {
 			public void run() {
-				String installUuid = ArchiverImpl.sharedArchiver()
-						.getInstallUuid();
+				String installUuid = ArchiverImpl.sharedArchiver().getInstallUuid();
 				VerificationImpl verification = verificationImpl();
 				verification.verifyTracking(key, installUuid, sharedAPI());
 			}
@@ -228,8 +227,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	public void identify(final String identity) {
 		// Pass this call onto the mDataExecutor ExecutorService
 		// as a Runnable object to be run on a background thread.
-		dataExecutor.execute(trackingRunnables.identify(identity,
-				ArchiverImpl.sharedArchiver(), this));
+		dataExecutor.execute(trackingRunnables.identify(identity, ArchiverImpl.sharedArchiver(), this));
 	}
 
 	/**
@@ -272,8 +270,9 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 *            Event properties or null
 	 */
 	// TODO: We should allow for recording properties as numbers or strings.
-	public void record(final String name,
-			final HashMap<String, String> properties) {
+	public void record(String name,
+			               HashMap<String, String> properties)
+  {
 		record(name, properties, RecordCondition.RECORD_ALWAYS);
 	}
 
@@ -283,7 +282,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 * @param name
 	 *            Event name
 	 */
-	public void record(final String name) {
+	public void record(String name) {
 		record(name, null, RecordCondition.RECORD_ALWAYS);
 	}
 	
@@ -304,7 +303,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 * 				event has already been recorded, any properties passed will also be 
 	 * 				ignored.
 	 */
-	public void record(final String name, final HashMap<String, String> properties, RecordCondition condition) {
+	public void record(String name, HashMap<String, String> properties, RecordCondition condition) {
 		dataExecutor.execute(trackingRunnables.record(name, properties, condition,
 				ArchiverImpl.sharedArchiver(), this));
 
@@ -330,7 +329,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 * 				ignored.
 	 * 				
 	 */
-	public void record(final String name, RecordCondition condition) {
+	public void record(String name, RecordCondition condition) {
 		record(name, null, condition);
 	}
 	
@@ -341,7 +340,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 *            User properties
 	 */
 	// TODO: We should allow for recording properties as numbers or strings.
-	public void set(final HashMap<String, String> properties) {
+	public void set(HashMap<String, String> properties) {
 		dataExecutor.execute(trackingRunnables.set(properties,
 				ArchiverImpl.sharedArchiver(), this));
 	}
@@ -353,7 +352,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 * @param value
 	 */
 	// TODO: We should allow for recording properties as numbers or strings.
-	public void setDistinct(final String propertyName, final String value) {
+	public void setDistinct(String propertyName, String value) {
 		dataExecutor.execute(trackingRunnables.setDistinct(propertyName,
 				value, ArchiverImpl.sharedArchiver(), this));
 	}
@@ -362,7 +361,6 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 * Automatically records the following events "Installed App" "Updated App"
 	 */
 	public void autoRecordInstalls() {
-
 		String versionName = appVersionName();
 		
 		if (versionName == null) {
@@ -409,7 +407,6 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 * (10) aka versionCode
 	 */
 	public void autoSetAppProperties() {
-
 		PackageManager pkgManager = context.getPackageManager();
 
 		try {
@@ -433,10 +430,11 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 * VerificationDelegateInterface methods
 	 ************************************************/
 	@Override
-	public void verificationComplete(final boolean success,
-			final boolean doTrack, final String baseUrl,
-			final long expirationDate) {
-
+	public void verificationComplete(boolean success,
+                                   boolean doTrack,
+                                   String baseUrl,
+                                   long expirationDate)
+  {
 		// We have 3 cases here.
 		// 1. verification URL request was unsuccessful.
 		// - We will continue to track but not send any data to KM trk
@@ -497,7 +495,9 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 */
 	@Deprecated
 	public static synchronized KISSmetricsAPI sharedAPI(String apiKey,
-			Context context, boolean secure) {
+			                                                Context context,
+                                                      boolean secure)
+  {
 		if (sharedAPI == null) {
 			sharedAPI = new KISSmetricsAPI(apiKey, context);
 		}
@@ -532,9 +532,9 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 *            Event name
 	 */
 	@Deprecated
-	public void recordOnce(final String name) {
-		dataExecutor.execute(trackingRunnables.recordOnce(name,
-				ArchiverImpl.sharedArchiver(), this));
+	public void recordOnce(String name) {
+    Runnable runnable = trackingRunnables.recordOnce(name, ArchiverImpl.sharedArchiver(), this);
+		dataExecutor.execute(runnable);
 	}
 	
 	/**
@@ -549,5 +549,4 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	public void setProperties(HashMap<String, String> properties) {
 		set(properties);
 	}
-
 }
