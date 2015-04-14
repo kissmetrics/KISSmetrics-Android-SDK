@@ -17,7 +17,7 @@
 
 package com.kissmetrics.sdk;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
 
@@ -33,8 +33,8 @@ public interface Archiver {
 	void archiveHasGenericIdentity(boolean hasGenericIdentity);
 	void archiveAppVersion(String appVersion);
 	void archiveFirstIdentity(String identity);
-	void archiveEvent(String name, HashMap<String, String> properties, RecordCondition condition);
-	void archiveProperties(HashMap<String, String> properties);
+	void archiveEvent(String name, Map<String, String> properties, RecordCondition condition);
+	void archiveProperties(Map<String, String> properties);
 	void archiveDistinctProperty(String name, String value);
 	void archiveIdentity(String identity);
 	void archiveAlias(String alias, String identity);
