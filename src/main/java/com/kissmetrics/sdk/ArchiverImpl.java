@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
 
@@ -74,11 +75,10 @@ public class ArchiverImpl implements Archiver {
 	/**
 	 * Initializes the private singleton.
 	 * 
-	 * @param productKey  KISSmetrics product key
+	 * @param key  KISSmetrics product key
 	 * @param applicationContext  Android application context
 	 */
-	private ArchiverImpl(final String key, final Context applicationContext) {
-		
+	private ArchiverImpl(String key, Context applicationContext) {
 		this.key = key;
 		this.context = applicationContext;
 		this.queryEncoder = new QueryEncoder(this.key, CLIENT_TYPE, Connection.USER_AGENT);
@@ -102,8 +102,8 @@ public class ArchiverImpl implements Archiver {
 	 * @param applicationContext  Android application context
 	 * @return Archiver singleton instance
 	 */
-	public static synchronized ArchiverImpl sharedArchiver(final String productKey, 
-														   final Context applicationContext) {
+	public static synchronized ArchiverImpl sharedArchiver(String productKey,
+														   Context applicationContext) {
 		if (sharedArchiver == null) {
 			sharedArchiver = new ArchiverImpl(productKey, applicationContext);
 		}
@@ -149,7 +149,7 @@ public class ArchiverImpl implements Archiver {
 			// The KISSmetrics SDK should not cause a customer's app to crash.
 			// If a FileNotFoundException or IOException arises we define default settings 
 			// and carry on. 
-			Log.w(KISSmetricsAPI.TAG, "Unable to unarchive saved settings");
+			Log.w(KISSmetricsAPI.TAG, "Unable to unarchive saved settings", e);
 		}
 		
 		// The file doesn't exist yet or there was an error in reading the file. 
@@ -196,7 +196,6 @@ public class ArchiverImpl implements Archiver {
 			Log.w(KISSmetricsAPI.TAG, "Unable to archive settings", e);
 		}
 	}
-    
 	
 	/**
 	 * Unarchive's identity from Shared Preferences.
@@ -329,7 +328,6 @@ public class ArchiverImpl implements Archiver {
 	 */
     @SuppressWarnings("unchecked")
 	private void unarchiveSavedProperties() {
-    	
     	// Not synch'd as should always be called inside of a sync block !!
     	try {
     		FileInputStream fis = this.context.openFileInput(SAVED_PROPERTIES_FILE);
@@ -431,8 +429,6 @@ public class ArchiverImpl implements Archiver {
     	return System.currentTimeMillis() / 1000L;
     }
 
-	
-    
     /************************************************
      * Public methods
      ************************************************/
@@ -466,7 +462,7 @@ public class ArchiverImpl implements Archiver {
      * 
      * @param doTrack  Setting to control recording of aliases, events and properties.
      */
-    public void archiveDoTrack(final boolean doTrack) {
+    public void archiveDoTrack(boolean doTrack) {
     	
     	synchronized (this) {
     		this.settings.put(DO_TRACK_KEY, doTrack);
@@ -480,7 +476,7 @@ public class ArchiverImpl implements Archiver {
      * 
      * @param doSend  Setting to control the uploading of aliases, events and properties.
      */
-    public void archiveDoSend(final boolean doSend) {
+    public void archiveDoSend(boolean doSend) {
     	
     	synchronized (this) {
     		this.settings.put(DO_SEND_KEY, doSend);
@@ -494,7 +490,7 @@ public class ArchiverImpl implements Archiver {
      * 
      * @param baseUrl Setting for API base URL path
      */
-    public void archiveBaseUrl(final String baseUrl) {
+    public void archiveBaseUrl(String baseUrl) {
     	
     	// Protect from null or empty string
     	if (baseUrl == null || baseUrl.length() == 0) {
@@ -514,7 +510,7 @@ public class ArchiverImpl implements Archiver {
      * 
      * @param expDate  Milliseconds from unix epoch when verification expires.
      */
-    public void archiveVerificationExpDate(final long expDate) {
+    public void archiveVerificationExpDate(long expDate) {
     	synchronized (this) {
     		this.settings.put(VERIFICATION_EXP_DATE_KEY, expDate);
     		this.archiveSettings();
@@ -539,7 +535,7 @@ public class ArchiverImpl implements Archiver {
      * 
      * @param appVersion String app version name.
      */
-    public void archiveAppVersion(final String appVersion) {
+    public void archiveAppVersion(String appVersion) {
     	synchronized (this) {
     		this.settings.put(APP_VERSION_KEY, appVersion);
     		this.archiveSettings();
@@ -554,7 +550,7 @@ public class ArchiverImpl implements Archiver {
      * 
      * @param identity  A new, anonymous identity
      */
-    public void archiveFirstIdentity(final String identity) {
+    public void archiveFirstIdentity(String identity) {
 
     	if (identity == null || identity.length() == 0) {
     		return;
@@ -571,7 +567,7 @@ public class ArchiverImpl implements Archiver {
     	}
     }
    
-    public void archiveEvent(final String name, final HashMap<String, String> properties, RecordCondition condition) {
+    public void archiveEvent(String name, Map<String, String> properties, RecordCondition condition) {
     	
     	if (name == null || name.length() == 0) {
     		Log.w(KISSmetricsAPI.TAG, 
@@ -627,7 +623,7 @@ public class ArchiverImpl implements Archiver {
      * @param name  Name of the event to record
      * @param properties  A HashMap of 1 or more properties, or null
      */
-    private void archiveEvent(final String name, final HashMap<String, String> properties) {
+    private void archiveEvent(String name, Map<String, String> properties) {
 
     	synchronized (this) {
 			String theUrl = this.queryEncoder.createEventQuery(name, properties, 
@@ -645,7 +641,7 @@ public class ArchiverImpl implements Archiver {
      * 
      * @param properties  HashMap of 1 or more properties.
      */
-    public void archiveProperties(final HashMap<String, String> properties) {
+    public void archiveProperties(Map<String, String> properties) {
 
     	if (properties == null || properties.isEmpty()) {
     		Log.w(KISSmetricsAPI.TAG, 
@@ -671,8 +667,8 @@ public class ArchiverImpl implements Archiver {
      * @param name  Property name(key)
      * @param value  Property value for name(key)
      */
-    public void archiveDistinctProperty(final String name, final String value) {
-    	
+    public void archiveDistinctProperty(String name, String value) {
+
     	synchronized (this) {
     		
     		String propertyValue = this.savedProperties.get(name);
@@ -701,8 +697,8 @@ public class ArchiverImpl implements Archiver {
      * 
      * @param identity  A new user identity
      */
-    public void archiveIdentity(final String identity) {
-    	
+    public void archiveIdentity(String identity) {
+
     	if (identity == null || identity.length() == 0 || identity.equals(this.lastIdentity)) {
     		Log.w(KISSmetricsAPI.TAG, "Attempted to use null, empty or existing identity. Ignoring");
     		return;
@@ -744,7 +740,7 @@ public class ArchiverImpl implements Archiver {
      * @param alias  An alias to an identity
      * @param identity  A known user identity
      */
-    public void archiveAlias(final String alias, final String identity) {
+    public void archiveAlias(String alias, String identity) {
     	
     	if (alias == null || alias.length() == 0 || identity == null || identity.length() == 0) {
     		Log.w(KISSmetricsAPI.TAG, 
@@ -807,7 +803,7 @@ public class ArchiverImpl implements Archiver {
      * @param index  Query string index in the sendQueue.
      * @return Query string of the requested index.
      */
-    public String getQueryString(final int index) {
+    public String getQueryString(int index) {
     	
     	synchronized (this) {
     		if (sendQueue.isEmpty()) {
@@ -825,7 +821,7 @@ public class ArchiverImpl implements Archiver {
      * 
      * @param index  Query string index in the sendQueue
      */
-    public void removeQueryString(final int index) {
+    public void removeQueryString(int index) {
     	
     	synchronized (this) {
     		// As an added precaution we check the length of the sendQueue before removing.

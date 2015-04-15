@@ -17,7 +17,7 @@
 
 package com.kissmetrics.sdk;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -135,8 +135,8 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 *            Android application context.
 	 * @return KISSmetricsAPI singleton instance.
 	 */
-  public static synchronized KISSmetricsAPI sharedAPI(final String productKey,
-                                                      final Context applicationContext)
+  public static synchronized KISSmetricsAPI sharedAPI(String productKey,
+                                                      Context applicationContext)
   {
 		if (sharedAPI == null) {
 			sharedAPI = new KISSmetricsAPI(productKey, applicationContext);
@@ -247,9 +247,9 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 * @param alias
 	 * @param identity
 	 */
-	public void alias(final String alias, final String identity) {
+	public void alias(String alias, String identity) {
 		dataExecutor.execute(trackingRunnables.alias(alias, identity,
-				ArchiverImpl.sharedArchiver(), this));
+            ArchiverImpl.sharedArchiver(), this));
 	}
 
 	/**
@@ -258,7 +258,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 */
 	public void clearIdentity() {
 		dataExecutor.execute(trackingRunnables.clearIdentity(generateID(),
-				ArchiverImpl.sharedArchiver()));
+            ArchiverImpl.sharedArchiver()));
 	}
 
 	/**
@@ -271,7 +271,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 */
 	// TODO: We should allow for recording properties as numbers or strings.
 	public void record(String name,
-			               HashMap<String, String> properties)
+			               Map<String, String> properties)
   {
 		record(name, properties, RecordCondition.RECORD_ALWAYS);
 	}
@@ -303,7 +303,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 * 				event has already been recorded, any properties passed will also be 
 	 * 				ignored.
 	 */
-	public void record(String name, HashMap<String, String> properties, RecordCondition condition) {
+	public void record(String name, Map<String, String> properties, RecordCondition condition) {
 		dataExecutor.execute(trackingRunnables.record(name, properties, condition,
 				ArchiverImpl.sharedArchiver(), this));
 
@@ -340,9 +340,9 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 *            User properties
 	 */
 	// TODO: We should allow for recording properties as numbers or strings.
-	public void set(HashMap<String, String> properties) {
+	public void set(Map<String, String> properties) {
 		dataExecutor.execute(trackingRunnables.set(properties,
-				ArchiverImpl.sharedArchiver(), this));
+            ArchiverImpl.sharedArchiver(), this));
 	}
 
 	/**
@@ -505,7 +505,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	}
 
 	/**
-	 * @deprecated use {@link record(String name, HashMap<String, String>
+	 * @deprecated use {@link record(String name, Map<String, String>
 	 *             properties)} instead. 'recordEvent' method name has been
 	 *             changed to 'record' for consistency across our various APIs.
 	 * 
@@ -517,12 +517,12 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 *            Event properties or null
 	 */
 	@Deprecated
-	public void recordEvent(String name, HashMap<String, String> properties) {
+	public void recordEvent(String name, Map<String, String> properties) {
 		record(name, properties);
 	}
 
 	/**
-	 * @deprecated use {@link record(String name, HashMap<String, String>
+	 * @deprecated use {@link record(String name, Map<String, String>
 	 *             properties), RecordCondition condition} instead. 'recordOnce' 
 	 *             would only restrict the recording of events per identity. A 
 	 *             more flexible solution was needed to allow recording of 
@@ -538,7 +538,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	}
 	
 	/**
-	 * @deprecated use {@link set(HashMap<String, String> properties)} instead.
+	 * @deprecated use {@link set(Map<String, String> properties)} instead.
 	 *             'setProperties' method name has been changed to 'set' for
 	 *             consistency across our various APIs.
 	 * 
@@ -546,7 +546,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 	 *            User properties
 	 */
 	@Deprecated
-	public void setProperties(HashMap<String, String> properties) {
+	public void setProperties(Map<String, String> properties) {
 		set(properties);
 	}
 }

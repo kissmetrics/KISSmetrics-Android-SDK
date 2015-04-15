@@ -17,9 +17,9 @@
 
 package com.kissmetrics.sdk;
 
-import java.util.HashMap;
-
 import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
+
+import java.util.Map;
 
 /**
  * TrackingRunnables interface
@@ -70,7 +70,7 @@ public interface TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will run appropriate tasks for the current tracking state.
 	 */
-	Runnable record(String name, HashMap<String, String> properties,
+	Runnable record(String name, Map<String, String> properties,
 						      RecordCondition condition, Archiver archiver,
 						      KISSmetricsAPI kmapi);
 	
@@ -94,7 +94,7 @@ public interface TrackingRunnables {
 	 * @param kmapi  The instance of KISSmetricsAPI where initiation of recursive send should occur.
 	 * @return A Runnable object that will run appropriate tasks for the current tracking state.
 	 */
-	Runnable set(HashMap<String, String> properties, Archiver archiver, KISSmetricsAPI kmapi);
+	Runnable set(Map<String, String> properties, Archiver archiver, KISSmetricsAPI kmapi);
 
 	/**
 	 * Creates a Runnable to archive and send properties with a new or different value for the 

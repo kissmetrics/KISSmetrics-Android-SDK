@@ -55,7 +55,7 @@ public class ConnectionImpl implements Connection {
 	 * @param urlString  URL encoded API query string
 	 * @delegate delegate Object implementing the ConnectionDelegate interface
 	 */
-	public void sendRecord(final String urlString, final ConnectionDelegate delegate) {
+	public void sendRecord(String urlString, ConnectionDelegate delegate) {
 		URL url = null;
 		connection = null;
 		
@@ -92,7 +92,7 @@ public class ConnectionImpl implements Connection {
         connection = null;
       }
 
-      if (malformed != true && (responseCode == 200 || responseCode == 304)) {
+      if (!malformed && (responseCode == 200 || responseCode == 304)) {
         success = true;
       } else {
         success = false;

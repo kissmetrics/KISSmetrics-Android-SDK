@@ -20,6 +20,7 @@ package com.kissmetrics.sdk;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Map;
 
 import android.util.Log;
 
@@ -56,7 +57,7 @@ public class QueryEncoder {
    * @param properties  HashMap of user or event properties
    * @return boolean  true if timestamp has been set in these properties
    */
-  private boolean propertiesContainTimestamp(HashMap<String, String> properties) {
+  private boolean propertiesContainTimestamp(Map<String, String> properties) {
     if (properties != null && properties.containsKey("_d") && properties.containsKey("_t")) {
       return true;
     }
@@ -116,7 +117,7 @@ public class QueryEncoder {
 	 * @param properties  User or Event properties.
 	 * @return the URL encoded properties
 	 */
-	public String encodeProperties(HashMap<String, String> properties) {
+	public String encodeProperties(Map<String, String> properties) {
 		if (properties == null || properties.isEmpty()) {
 			return "";
 		}
@@ -176,13 +177,13 @@ public class QueryEncoder {
 	 * @return the URL encoded query string
 	 */
 	public String createEventQuery(String name,
-                                 HashMap<String, String>properties,
+                                 Map<String, String>properties,
 								                 String identity,
                                  long timestamp)
   {
-		String theUrl = String.format("%s?_k=%s&_c=%s&_u=%s&_p=%s&_n=%s", EVENT_PATH, key, 
-									                clientType, userAgent, encodeIdentity(identity),
-									                encodeEvent(name));
+		String theUrl = String.format("%s?_k=%s&_c=%s&_u=%s&_p=%s&_n=%s", EVENT_PATH, key,
+            clientType, userAgent, encodeIdentity(identity),
+            encodeEvent(name));
 
 		if (!propertiesContainTimestamp(properties)) {
 			theUrl += String.format("&_d=1&_t=%d", timestamp);
@@ -201,7 +202,7 @@ public class QueryEncoder {
 	 * @param timestamp  A unix epoch timestamp to apply if _t & _d have not been set in properties
 	 * @return the URL encoded query string
 	 */
-  public String createPropertiesQuery(HashMap<String, String>properties,
+  public String createPropertiesQuery(Map<String, String>properties,
                                       String identity,
                                       long timestamp)
   {

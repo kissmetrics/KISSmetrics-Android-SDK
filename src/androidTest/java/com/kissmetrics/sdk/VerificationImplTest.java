@@ -43,7 +43,7 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
 			testUrl = new URL("http://www.google.com/"); // <- No special url required, just needs to be valid.
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
-		} 
+		}
 		
 		mockConnection = new MockHttpURLConnection(testUrl);
 		mockConnection.setExpectedGetInputStream(new ByteArrayInputStream("".getBytes()));//<- Not always used but required for mock, so empty 
