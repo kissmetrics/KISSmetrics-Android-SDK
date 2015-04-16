@@ -15,23 +15,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
-
 
 /**
  * Connection interface
- * 
  */
 interface Connection {
-  public static final String USER_AGENT = "KISSmetrics-Android/2.2.0";
-	
-	/**
-	 * Makes a request to the provided API query urlString.
-	 * Handles the response and notifies the provided ConnectionDelgate on completion.
-	 * 
-	 * @param urlString  URL encoded API query string
-	 * @delegate delegate Object implementing the ConnectionDelegate interface
-	 */
-	public void sendRecord(String urlString, ConnectionDelegate delegate);
+  public static final String USER_AGENT = "KISSmetrics-Android/2.2.1";
+
+  /**
+   * Makes a request to the provided API query urlString.
+   * Handles the response and notifies the provided ConnectionDelgate on completion.
+   *
+   * @param urlString URL encoded API query string
+   * @delegate delegate Object implementing the ConnectionDelegate interface
+   */
+  void sendRecord(String urlString, ConnectionDelegate delegate);
 }

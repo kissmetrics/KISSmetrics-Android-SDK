@@ -17,7 +17,7 @@
 
 package com.kissmetrics.sdk;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,526 +28,491 @@ import android.util.Log;
 
 /**
  * KISSmetricsAPI
- * 
+ * <p/>
  * Public API for sending identities, events and properties to KISSmetrics from
  * Android applications. Compatible with Android 2.2+
- * 
  */
 public final class KISSmetricsAPI implements VerificationDelegate {
-	public enum RecordCondition {
-		RECORD_ALWAYS,
-		RECORD_ONCE_PER_INSTALL,
-		RECORD_ONCE_PER_IDENTITY
-	}
-	
-	private static final long FAILSAFE_MAX_VERIFICATION_DUR = 1209600000L; // 14 days
-	
-	private static KISSmetricsAPI sharedAPI = null;
-	private static VerificationImpl verificationImpl = null;
-	private static ExecutorService dataExecutor = Executors.newFixedThreadPool(2);
-	
-	private TrackingRunnables trackingRunnables = null;
-	
-	private String key;
-	private Context context;
+  public static final String TAG = "KISSmetricsAPI";
 
-	protected static Sender sender;
-	
-	
-	/**
-	 * Allows for injection of a mock Verification.
-	 * 
-	 * @param verImpl
-	 *            A mock Verification to use under test.
-	 */
-	protected static void setVerificationImpl(VerificationImpl verImpl) {
-		verificationImpl = verImpl;
-	}
+  public enum RecordCondition {
+    RECORD_ALWAYS,
+    RECORD_ONCE_PER_INSTALL,
+    RECORD_ONCE_PER_IDENTITY
+  }
 
-	/**
-	 * Initializes the default Connection if not set. Allows for injection of
-	 * mock HttpURLConnection within VerificationImpl.
-	 * 
-	 * Returns the injected verificationImpl if it exists.
-	 * 
-	 * @return Connection
-	 */
-	protected static VerificationImpl verificationImpl() {
-		if (verificationImpl != null) {
-			return verificationImpl;
-		}
-		return new VerificationImpl();
-	}
+  private static final long FAILSAFE_MAX_VERIFICATION_DUR = 1209600000L; // 14 days
 
-	/**
-	 * Initializes the private singleton.
-	 * 
-	 * @param productKey
-	 *            KISSmetrics product key.
-	 * @param context
-	 *            Android application context.
-	 */
-	private KISSmetricsAPI(final String productKey, final Context appContext) {
+  private static KISSmetricsAPI sharedAPI = null;
+  private static VerificationImpl verificationImpl = null;
+  private static ExecutorService dataExecutor = Executors.newFixedThreadPool(2);
 
-		key = productKey;
-		context = appContext;
+  private TrackingRunnables trackingRunnables = null;
 
-		ArchiverImpl.sharedArchiver(this.key, this.context);
+  private String key;
+  private Context context;
 
-		// Ensure an Install UUID exists
-		String installUuid = ArchiverImpl.sharedArchiver().getInstallUuid();
+  protected static Sender sender;
 
-		if (installUuid == null || installUuid.length() == 0) {
-			// No install id has been set. Make and archive a new one.
-			ArchiverImpl.sharedArchiver()
-					.archiveInstallUuid(generateID());
-			installUuid = ArchiverImpl.sharedArchiver().getInstallUuid();
-		}
+  /**
+   * Allows for injection of a mock Verification.
+   *
+   * @param verImpl A mock Verification to use under test.
+   */
+  protected static void setVerificationImpl(VerificationImpl verImpl) {
+    verificationImpl = verImpl;
+  }
 
-		// Ensure an Identity exists
-		String archIdentity = ArchiverImpl.sharedArchiver().getIdentity();
+  /**
+   * Initializes the default Connection if not set. Allows for injection of
+   * mock HttpURLConnection within VerificationImpl.
+   * <p/>
+   * Returns the injected verificationImpl if it exists.
+   *
+   * @return Connection
+   */
+  protected static VerificationImpl verificationImpl() {
+    if (verificationImpl != null) {
+      return verificationImpl;
+    }
+    return new VerificationImpl();
+  }
 
-		if (archIdentity == null || archIdentity.length() == 0) {
-			// No identity has been set. Make and archive a new one.
-			ArchiverImpl.sharedArchiver().archiveFirstIdentity(
-					generateID());
-		}
-		
-		if (sender == null) {
-			sender = new Sender(!ArchiverImpl.sharedArchiver().getDoSend());
-		}
-		
-		// Set the TrackingRunnables state
-		if (ArchiverImpl.sharedArchiver().getDoTrack()) {
-			trackingRunnables = new TrackingRunnablesTrackingState();
-		} else {
-			trackingRunnables = new TrackingRunnablesNonTrackingState();
-		}
-	}
+  /**
+   * Initializes the private singleton.
+   *
+   * @param productKey KISSmetrics product key.
+   * @param appContext Android application context.
+   */
+  private KISSmetricsAPI(final String productKey, final Context appContext) {
+    key = productKey;
+    context = appContext;
 
-	/**
-	 * Initializes and/or returns the KISSmetricsAPI singleton instance. This
-	 * method must be called before making any other calls.
-	 * 
-	 * @param productKey
-	 *            KISSmetrics product key.
-	 * @param applicationContext
-	 *            Android application context.
-	 * @return KISSmetricsAPI singleton instance.
-	 */
-	public static synchronized KISSmetricsAPI sharedAPI(
-			final String productKey, final Context applicationContext) {
-		if (sharedAPI == null) {
-			sharedAPI = new KISSmetricsAPI(productKey, applicationContext);
-		}
+    ArchiverImpl.sharedArchiver(this.key, this.context);
 
-		// Verifying tracking here will allow for checks from the Android app's
-		// state has been cached with the SDK already initialized.
-		sharedAPI.verifyForTracking();
+    // Ensure an Install UUID exists
+    String installUuid = ArchiverImpl.sharedArchiver().getInstallUuid();
 
-		return sharedAPI;
-	}
+    if (installUuid == null || installUuid.length() == 0) {
+      // No install id has been set. Make and archive a new one.
+      ArchiverImpl.sharedArchiver()
+              .archiveInstallUuid(generateID());
+    }
 
-	/**
-	 * @return KISSmetricsAPI singleton instance.
-	 */
-	public static synchronized KISSmetricsAPI sharedAPI() {
-		if (sharedAPI == null) {
-			Log.w("KISSmetricsAPI",
-					"KISSMetricsAPI: WARNING - Returning null object in sharedAPI as "
-							+ "sharedAPI(<API_KEY>, <Context>): has not been called.");
-		}
-		return sharedAPI;
-	}
+    // Ensure an Identity exists
+    String archIdentity = ArchiverImpl.sharedArchiver().getIdentity();
 
-	
-	/************************************************
-	 * Private methods
-	 ************************************************/
+    if (archIdentity == null || archIdentity.length() == 0) {
+      // No identity has been set. Make and archive a new one.
+      ArchiverImpl.sharedArchiver().archiveFirstIdentity(
+              generateID());
+    }
 
-	/**
-	 * Creates a random UUID string.
-	 * 
-	 * @return UUID string
-	 */
-	private String generateID() {
-		return UUID.randomUUID().toString();
-	}
+    if (sender == null) {
+      sender = new Sender(!ArchiverImpl.sharedArchiver().getDoSend());
+    }
 
-	/**
-	 * Verifies the KISSmetricsAPI product for tracking asynchronously.
-	 */
-	private void verifyForTracking() {
+    // Set the TrackingRunnables state
+    if (ArchiverImpl.sharedArchiver().getDoTrack()) {
+      trackingRunnables = new TrackingRunnablesTrackingState();
+    } else {
+      trackingRunnables = new TrackingRunnablesNonTrackingState();
+    }
+  }
 
-		if (System.currentTimeMillis() < ArchiverImpl.sharedArchiver()
-				.getVerificationExpDate()) {
-			return;
-		}
+  /**
+   * Initializes and/or returns the KISSmetricsAPI singleton instance. This
+   * method must be called before making any other calls.
+   *
+   * @param productKey         KISSmetrics product key.
+   * @param applicationContext Android application context.
+   * @return KISSmetricsAPI singleton instance.
+   */
+  public static synchronized KISSmetricsAPI sharedAPI(String productKey,
+                                                      Context applicationContext) {
+    if (sharedAPI == null) {
+      sharedAPI = new KISSmetricsAPI(productKey, applicationContext);
+    }
 
-		new Thread(new Runnable() {
-			public void run() {
-				String installUuid = ArchiverImpl.sharedArchiver()
-						.getInstallUuid();
-				VerificationImpl verification = verificationImpl();
-				verification.verifyTracking(key, installUuid, sharedAPI());
-			}
-		}).start();
-	}
+    // Verifying tracking here will allow for checks from the Android app's
+    // state has been cached with the SDK already initialized.
+    sharedAPI.verifyForTracking();
 
-	/**
-	 * @return app version from package info
-	 */
-	private String appVersionName() {
-		try {
-			PackageManager pkgManager = context.getPackageManager();
-			String pkg = context.getPackageName();
-			return pkgManager.getPackageInfo(pkg, 0).versionName;
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
-	/**
-	 * Starts sending to empty the sendQueue when sender is in the 
-	 * ready state.
-	 */
-	protected void sendRecords() {
-		sender.startSending();
-	}
-	
-	/************************************************
-	 * Public methods
-	 ************************************************/
+    return sharedAPI;
+  }
 
-	/**
-	 * Applies an identity to the user.
-	 * 
-	 * @param identity
-	 *            user identity
-	 */
-	public void identify(final String identity) {
-		// Pass this call onto the mDataExecutor ExecutorService
-		// as a Runnable object to be run on a background thread.
-		dataExecutor.execute(trackingRunnables.identify(identity,
-				ArchiverImpl.sharedArchiver(), this));
-	}
+  /**
+   * @return KISSmetricsAPI singleton instance.
+   */
+  public static synchronized KISSmetricsAPI sharedAPI() {
+    if (sharedAPI == null) {
+      Log.w(TAG,
+              "KISSMetricsAPI: WARNING - Returning null object in sharedAPI as "
+                      + "sharedAPI(<API_KEY>, <Context>): has not been called.");
+    }
+    return sharedAPI;
+  }
 
-	/**
-	 * This getter does not lock on the Archiver instance to prevent locking of
-	 * an application's main thread. All writes to identity lock on the
-	 * singleton instance of sharedArchiver.
-	 * 
-	 * @return Last provided identity string for the current user
-	 */
-	public String identity() {
-		return ArchiverImpl.sharedArchiver().getIdentity();
-	}
+  /************************************************
+   * Private methods
+   ************************************************/
 
-	/**
-	 * Applies an alias to an identity
-	 * 
-	 * @param alias
-	 * @param identity
-	 */
-	public void alias(final String alias, final String identity) {
-		dataExecutor.execute(trackingRunnables.alias(alias, identity,
-				ArchiverImpl.sharedArchiver(), this));
-	}
+  /**
+   * Creates a random UUID string.
+   *
+   * @return UUID string
+   */
+  private String generateID() {
+    return UUID.randomUUID().toString();
+  }
 
-	/**
-	 * Sets a new random identity that isn't aliased or associated with a
-	 * previous identity.
-	 */
-	public void clearIdentity() {
-		dataExecutor.execute(trackingRunnables.clearIdentity(generateID(),
-				ArchiverImpl.sharedArchiver()));
-	}
+  /**
+   * Verifies the KISSmetricsAPI product for tracking asynchronously.
+   */
+  private void verifyForTracking() {
+    if (System.currentTimeMillis() < ArchiverImpl.sharedArchiver()
+            .getVerificationExpDate()) {
+      return;
+    }
 
-	/**
-	 * Records an event with optional properties.
-	 * 
-	 * @param name
-	 *            Event name
-	 * @param properties
-	 *            Event properties or null
-	 */
-	// TODO: We should allow for recording properties as numbers or strings.
-	public void record(final String name,
-			final HashMap<String, String> properties) {
-		record(name, properties, RecordCondition.RECORD_ALWAYS);
-	}
+    new Thread(new Runnable() {
+      public void run() {
+        String installUuid = ArchiverImpl.sharedArchiver().getInstallUuid();
+        VerificationImpl verification = verificationImpl();
+        verification.verifyTracking(key, installUuid, sharedAPI());
+      }
+    }).start();
+  }
 
-	/**
-	 * Convenience method for recording an event without properties.
-	 * 
-	 * @param name
-	 *            Event name
-	 */
-	public void record(final String name) {
-		record(name, null, RecordCondition.RECORD_ALWAYS);
-	}
-	
-	/**
-	 * Records an event per identity or install depending on the RecordCondition that's passed.
-	 * 
-	 * @param name
-	 *            Event name
-	 * @param properties
-	 *            Event properties or null
-	 * @param condition
-	 * 			  RecordCondition (RecordOncePerInstall, RecordOncePerIdentity).
-	 * 				- Using RecordOncePerInstall: The event will only be recorded once 
-	 * 				during the lifetime of the application's installation. If the event 
-	 * 				has already been recorded, any properties passed will also be ignored.
-	 * 				- Using RecordOncePerIdentity: The event will only be recorded once 
-	 * 				until the identity changes or is cleared via clearIdentity. If the 
-	 * 				event has already been recorded, any properties passed will also be 
-	 * 				ignored.
-	 */
-	public void record(final String name, final HashMap<String, String> properties, RecordCondition condition) {
-		dataExecutor.execute(trackingRunnables.record(name, properties, condition,
-				ArchiverImpl.sharedArchiver(), this));
+  /**
+   * @return app version from package info
+   */
+  private String appVersionName() {
+    try {
+      PackageManager pkgManager = context.getPackageManager();
+      String pkg = context.getPackageName();
+      return pkgManager.getPackageInfo(pkg, 0).versionName;
+    } catch (Exception e) {
+      return null;
+    }
+  }
 
-		// The main activity's onCreate method will likely not be called
-		// frequently enough to re-verify.
-		// In most cases this will only be checking the expiration date.
-		verifyForTracking();
-	}
-	
-	/**
-	 * Convenience method for recording an event on a RecordCondition without properties.
-	 * 
-	 * @param name
-	 *            Event name
-	 * @param condition
-	 * 			  RecordCondition (RecordOncePerInstall, RecordOncePerIdentity).
-	 * 				- Using RecordOncePerInstall: The event will only be recorded once 
-	 * 				during the lifetime of the application's installation. If the event 
-	 * 				has already been recorded, any properties passed will also be ignored.
-	 * 				- Using RecordOncePerIdentity: The event will only be recorded once 
-	 * 				until the identity changes or is cleared via clearIdentity. If the 
-	 * 				event has already been recorded, any properties passed will also be 
-	 * 				ignored.
-	 * 				
-	 */
-	public void record(final String name, RecordCondition condition) {
-		record(name, null, condition);
-	}
-	
-	/**
-	 * Sets one or more properties.
-	 * 
-	 * @param properties
-	 *            User properties
-	 */
-	// TODO: We should allow for recording properties as numbers or strings.
-	public void set(final HashMap<String, String> properties) {
-		dataExecutor.execute(trackingRunnables.set(properties,
-				ArchiverImpl.sharedArchiver(), this));
-	}
+  /**
+   * Starts sending to empty the sendQueue when sender is in the
+   * ready state.
+   */
+  protected void sendRecords() {
+    sender.startSending();
+  }
 
-	/**
-	 * Sets a single property if the value is different from the last set value.
-	 * 
-	 * @param propertyName
-	 * @param value
-	 */
-	// TODO: We should allow for recording properties as numbers or strings.
-	public void setDistinct(final String propertyName, final String value) {
-		dataExecutor.execute(trackingRunnables.setDistinct(propertyName,
-				value, ArchiverImpl.sharedArchiver(), this));
-	}
-	
-	/**
-	 * Automatically records the following events "Installed App" "Updated App"
-	 */
-	public void autoRecordInstalls() {
+  /************************************************
+   * Public methods
+   ************************************************/
 
-		String versionName = appVersionName();
-		
-		if (versionName == null) {
-			versionName = "";
-		} else {
-			setDistinct("App Version", versionName);
-		}
+  /**
+   * Applies an identity to the user.
+   *
+   * @param identity user identity
+   */
+  public void identify(final String identity) {
+    // Pass this call onto the mDataExecutor ExecutorService
+    // as a Runnable object to be run on a background thread.
+    dataExecutor.execute(trackingRunnables.identify(identity, ArchiverImpl.sharedArchiver(), this));
+  }
 
-		// There is no reliable place to store data that will persist between
-		// app install and uninstall. We use Archiver's settings store.
-		String lastAppVersion = ArchiverImpl.sharedArchiver().getAppVersion();
-		
-		if (versionName.equals(lastAppVersion)) {
-			// Most common case. No action required.
-			return;
-		}
-		
-		ArchiverImpl.sharedArchiver().archiveAppVersion(versionName);
+  /**
+   * This getter does not lock on the Archiver instance to prevent locking of
+   * an application's main thread. All writes to identity lock on the
+   * singleton instance of sharedArchiver.
+   *
+   * @return Last provided identity string for the current user
+   */
+  public String identity() {
+    return ArchiverImpl.sharedArchiver().getIdentity();
+  }
 
-		if (lastAppVersion == null) {
-			// This is a fresh install
-			record("Installed App");
-		} else if (!lastAppVersion.equals(versionName)) {
-			// This is an update
-			record("Updated App");
-		}
-	}
+  /**
+   * Applies an alias to an identity
+   *
+   * @param alias
+   * @param identity
+   */
+  public void alias(String alias, String identity) {
+    dataExecutor.execute(trackingRunnables.alias(alias, identity,
+            ArchiverImpl.sharedArchiver(), this));
+  }
 
-	/**
-	 * Automatically collects and sets the following hardware properties as
-	 * distinct properties: "Device Manufacturer" : (Asus) "Device Model" :
-	 * (Nexus 7) "System Name" : (Android) "System Version" : (4.4)
-	 */
-	public void autoSetHardwareProperties() {
-		setDistinct("Device Manufacturer", android.os.Build.MANUFACTURER);
-		setDistinct("Device Model", android.os.Build.MODEL);
-		setDistinct("System Name", "Android");
-		setDistinct("System Version", android.os.Build.VERSION.RELEASE);
-	}
+  /**
+   * Sets a new random identity that isn't aliased or associated with a
+   * previous identity.
+   */
+  public void clearIdentity() {
+    dataExecutor.execute(trackingRunnables.clearIdentity(generateID(),
+            ArchiverImpl.sharedArchiver()));
+  }
 
-	/**
-	 * Automatically collects and sets the following applcation properties as
-	 * distinct properties: "App Version" : (1.0) aka versionName "App Build" :
-	 * (10) aka versionCode
-	 */
-	public void autoSetAppProperties() {
+  /**
+   * Records an event with optional properties.
+   *
+   * @param name       Event name
+   * @param properties Event properties or null
+   */
+  // TODO: We should allow for recording properties as numbers or strings.
+  public void record(String name,
+                     Map<String, String> properties) {
+    record(name, properties, RecordCondition.RECORD_ALWAYS);
+  }
 
-		PackageManager pkgManager = context.getPackageManager();
+  /**
+   * Convenience method for recording an event without properties.
+   *
+   * @param name Event name
+   */
+  public void record(String name) {
+    record(name, null, RecordCondition.RECORD_ALWAYS);
+  }
 
-		try {
-			String pkg = context.getPackageName();
-			String versionName = pkgManager.getPackageInfo(pkg, 0).versionName;
-			setDistinct("App Version", versionName);
-		} catch (Exception e) {
-			// Catch intentionally blank
-		}
+  /**
+   * Records an event per identity or install depending on the RecordCondition that's passed.
+   *
+   * @param name       Event name
+   * @param properties Event properties or null
+   * @param condition  RecordCondition (RecordOncePerInstall, RecordOncePerIdentity).
+   *                   - Using RecordOncePerInstall: The event will only be recorded once
+   *                   during the lifetime of the application's installation. If the event
+   *                   has already been recorded, any properties passed will also be ignored.
+   *                   - Using RecordOncePerIdentity: The event will only be recorded once
+   *                   until the identity changes or is cleared via clearIdentity. If the
+   *                   event has already been recorded, any properties passed will also be
+   *                   ignored.
+   */
+  public void record(String name, Map<String, String> properties, RecordCondition condition) {
+    dataExecutor.execute(trackingRunnables.record(name, properties, condition,
+            ArchiverImpl.sharedArchiver(), this));
 
-		try {
-			String pkg = context.getPackageName();
-			int versionCode = pkgManager.getPackageInfo(pkg, 0).versionCode;
-			setDistinct("App Build", String.valueOf(versionCode));
-		} catch (Exception e) {
-			// Catch intentionally blank
-		}
-	}
+    // The main activity's onCreate method will likely not be called
+    // frequently enough to re-verify.
+    // In most cases this will only be checking the expiration date.
+    verifyForTracking();
+  }
 
-	/************************************************
-	 * VerificationDelegateInterface methods
-	 ************************************************/
-	@Override
-	public void verificationComplete(final boolean success,
-			final boolean doTrack, final String baseUrl,
-			final long expirationDate) {
+  /**
+   * Convenience method for recording an event on a RecordCondition without properties.
+   *
+   * @param name      Event name
+   * @param condition RecordCondition (RecordOncePerInstall, RecordOncePerIdentity).
+   *                  - Using RecordOncePerInstall: The event will only be recorded once
+   *                  during the lifetime of the application's installation. If the event
+   *                  has already been recorded, any properties passed will also be ignored.
+   *                  - Using RecordOncePerIdentity: The event will only be recorded once
+   *                  until the identity changes or is cleared via clearIdentity. If the
+   *                  event has already been recorded, any properties passed will also be
+   *                  ignored.
+   */
+  public void record(String name, RecordCondition condition) {
+    record(name, null, condition);
+  }
 
-		// We have 3 cases here.
-		// 1. verification URL request was unsuccessful.
-		// - We will continue to track but not send any data to KM trk
-		// 2. verification URL request was successful. !doTrack
-		// 3. verification URL request was successful. doTrack
+  /**
+   * Sets one or more properties.
+   *
+   * @param properties User properties
+   */
+  // TODO: We should allow for recording properties as numbers or strings.
+  public void set(Map<String, String> properties) {
+    dataExecutor.execute(trackingRunnables.set(properties,
+            ArchiverImpl.sharedArchiver(), this));
+  }
 
-		if (!success) {
-			// Do Track by default.
-			trackingRunnables = new TrackingRunnablesTrackingState();
-			ArchiverImpl.sharedArchiver().archiveDoTrack(true);
+  /**
+   * Sets a single property if the value is different from the last set value.
+   *
+   * @param propertyName
+   * @param value
+   */
+  // TODO: We should allow for recording properties as numbers or strings.
+  public void setDistinct(String propertyName, String value) {
+    dataExecutor.execute(trackingRunnables.setDistinct(propertyName,
+            value, ArchiverImpl.sharedArchiver(), this));
+  }
 
-			// Do not send by default.
-			sender.disableSending();
-			ArchiverImpl.sharedArchiver().archiveDoSend(false);
+  /**
+   * Automatically records the following events "Installed App" "Updated App"
+   */
+  public void autoRecordInstalls() {
+    String versionName = appVersionName();
 
-			// Do not modify baseUrl.
-			return;
-		}
+    if (versionName == null) {
+      versionName = "";
+    } else {
+      setDistinct("App Version", versionName);
+    }
 
-		long maxExpDate = (System.currentTimeMillis() + FAILSAFE_MAX_VERIFICATION_DUR);
+    // There is no reliable place to store data that will persist between
+    // app install and uninstall. We use Archiver's settings store.
+    String lastAppVersion = ArchiverImpl.sharedArchiver().getAppVersion();
 
-		ArchiverImpl.sharedArchiver().archiveVerificationExpDate(
-				Math.min(expirationDate, maxExpDate));
-		if (!doTrack) {
-			trackingRunnables = new TrackingRunnablesNonTrackingState();
-			sender.disableSending();
-		} else {
-			trackingRunnables = new TrackingRunnablesTrackingState();
-			// If we should be tracking, then we should be sending
-			sender.enableSending();
-			ArchiverImpl.sharedArchiver().archiveDoSend(true);
-		}
+    if (versionName.equals(lastAppVersion)) {
+      // Most common case. No action required.
+      return;
+    }
 
-		ArchiverImpl.sharedArchiver().archiveDoTrack(doTrack);
+    ArchiverImpl.sharedArchiver().archiveAppVersion(versionName);
 
-		ArchiverImpl.sharedArchiver().archiveBaseUrl(baseUrl);
-	}
+    if (lastAppVersion == null) {
+      // This is a fresh install
+      record("Installed App");
+    } else if (!lastAppVersion.equals(versionName)) {
+      // This is an update
+      record("Updated App");
+    }
+  }
 
-	
-	/************************************************
-	 * Deprecated Public Methods
-	 ************************************************/
+  /**
+   * Automatically collects and sets the following hardware properties as
+   * distinct properties: "Device Manufacturer" : (Asus) "Device Model" :
+   * (Nexus 7) "System Name" : (Android) "System Version" : (4.4)
+   */
+  public void autoSetHardwareProperties() {
+    setDistinct("Device Manufacturer", android.os.Build.MANUFACTURER);
+    setDistinct("Device Model", android.os.Build.MODEL);
+    setDistinct("System Name", "Android");
+    setDistinct("System Version", android.os.Build.VERSION.RELEASE);
+  }
 
-	/**
-	 * @deprecated use {@link sharedAPI(String apiKey)} instead. All requests
-	 *             are now made over https. secure(boolean) is ignored.
-	 * 
-	 *             Initializes and/or returns the KISSmetricsAPI singleton
-	 *             instance.
-	 * 
-	 * @param apiKey
-	 *            KISSmetrics product key
-	 * @param context
-	 *            Android application context
-	 * @param secure
-	 *            !Ignored!
-	 * @return singleton instance of the KISSmeticsAPI
-	 */
-	@Deprecated
-	public static synchronized KISSmetricsAPI sharedAPI(String apiKey,
-			Context context, boolean secure) {
-		if (sharedAPI == null) {
-			sharedAPI = new KISSmetricsAPI(apiKey, context);
-		}
-		return sharedAPI;
-	}
+  /**
+   * Automatically collects and sets the following applcation properties as
+   * distinct properties: "App Version" : (1.0) aka versionName "App Build" :
+   * (10) aka versionCode
+   */
+  public void autoSetAppProperties() {
+    PackageManager pkgManager = context.getPackageManager();
 
-	/**
-	 * @deprecated use {@link record(String name, HashMap<String, String>
-	 *             properties)} instead. 'recordEvent' method name has been
-	 *             changed to 'record' for consistency across our various APIs.
-	 * 
-	 *             Records an event with optional properties.
-	 * 
-	 * @param name
-	 *            Event name
-	 * @param properties
-	 *            Event properties or null
-	 */
-	@Deprecated
-	public void recordEvent(String name, HashMap<String, String> properties) {
-		record(name, properties);
-	}
+    try {
+      String pkg = context.getPackageName();
+      String versionName = pkgManager.getPackageInfo(pkg, 0).versionName;
+      setDistinct("App Version", versionName);
+    } catch (Exception e) {
+      // Catch intentionally blank
+    }
 
-	/**
-	 * @deprecated use {@link record(String name, HashMap<String, String>
-	 *             properties), RecordCondition condition} instead. 'recordOnce' 
-	 *             would only restrict the recording of events per identity. A 
-	 *             more flexible solution was needed to allow recording of 
-	 *             events once per installation or identity.
-	 * 
-	 * @param name
-	 *            Event name
-	 */
-	@Deprecated
-	public void recordOnce(final String name) {
-		dataExecutor.execute(trackingRunnables.recordOnce(name,
-				ArchiverImpl.sharedArchiver(), this));
-	}
-	
-	/**
-	 * @deprecated use {@link set(HashMap<String, String> properties)} instead.
-	 *             'setProperties' method name has been changed to 'set' for
-	 *             consistency across our various APIs.
-	 * 
-	 * @param properties
-	 *            User properties
-	 */
-	@Deprecated
-	public void setProperties(HashMap<String, String> properties) {
-		set(properties);
-	}
+    try {
+      String pkg = context.getPackageName();
+      int versionCode = pkgManager.getPackageInfo(pkg, 0).versionCode;
+      setDistinct("App Build", String.valueOf(versionCode));
+    } catch (Exception e) {
+      // Catch intentionally blank
+    }
+  }
 
+  /**
+   * *********************************************
+   * VerificationDelegateInterface methods
+   * **********************************************
+   */
+  @Override
+  public void verificationComplete(boolean success,
+                                   boolean doTrack,
+                                   String baseUrl,
+                                   long expirationDate) {
+    // We have 3 cases here.
+    // 1. verification URL request was unsuccessful.
+    // - We will continue to track but not send any data to KM trk
+    // 2. verification URL request was successful. !doTrack
+    // 3. verification URL request was successful. doTrack
+
+    if (!success) {
+      // Do Track by default.
+      trackingRunnables = new TrackingRunnablesTrackingState();
+      ArchiverImpl.sharedArchiver().archiveDoTrack(true);
+
+      // Do not send by default.
+      sender.disableSending();
+      ArchiverImpl.sharedArchiver().archiveDoSend(false);
+
+      // Do not modify baseUrl.
+      return;
+    }
+
+    long maxExpDate = (System.currentTimeMillis() + FAILSAFE_MAX_VERIFICATION_DUR);
+
+    ArchiverImpl.sharedArchiver().archiveVerificationExpDate(
+            Math.min(expirationDate, maxExpDate));
+    if (!doTrack) {
+      trackingRunnables = new TrackingRunnablesNonTrackingState();
+      sender.disableSending();
+    } else {
+      trackingRunnables = new TrackingRunnablesTrackingState();
+      // If we should be tracking, then we should be sending
+      sender.enableSending();
+      ArchiverImpl.sharedArchiver().archiveDoSend(true);
+    }
+
+    ArchiverImpl.sharedArchiver().archiveDoTrack(doTrack);
+    ArchiverImpl.sharedArchiver().archiveBaseUrl(baseUrl);
+  }
+
+  /************************************************
+   * Deprecated Public Methods
+   ************************************************/
+
+  /**
+   * @param apiKey  KISSmetrics product key
+   * @param context Android application context
+   * @param secure  !Ignored!
+   * @return singleton instance of the KISSmeticsAPI
+   * @deprecated use {@link sharedAPI(String apiKey)} instead. All requests
+   * are now made over https. secure(boolean) is ignored.
+   * <p/>
+   * Initializes and/or returns the KISSmetricsAPI singleton
+   * instance.
+   */
+  @Deprecated
+  public static synchronized KISSmetricsAPI sharedAPI(String apiKey,
+                                                      Context context,
+                                                      boolean secure) {
+    if (sharedAPI == null) {
+      sharedAPI = new KISSmetricsAPI(apiKey, context);
+    }
+    return sharedAPI;
+  }
+
+  /**
+   * @param name       Event name
+   * @param properties Event properties or null
+   * @deprecated use {@link record(String name, Map<String, String>
+   * properties)} instead. 'recordEvent' method name has been
+   * changed to 'record' for consistency across our various APIs.
+   * <p/>
+   * Records an event with optional properties.
+   */
+  @Deprecated
+  public void recordEvent(String name, Map<String, String> properties) {
+    record(name, properties);
+  }
+
+  /**
+   * @param name Event name
+   * @deprecated use {@link record(String name, Map<String, String>
+   * properties), RecordCondition condition} instead. 'recordOnce'
+   * would only restrict the recording of events per identity. A
+   * more flexible solution was needed to allow recording of
+   * events once per installation or identity.
+   */
+  @Deprecated
+  public void recordOnce(String name) {
+    Runnable runnable = trackingRunnables.recordOnce(name, ArchiverImpl.sharedArchiver(), this);
+    dataExecutor.execute(runnable);
+  }
+
+  /**
+   * @param properties User properties
+   * @deprecated use {@link set(Map<String, String> properties)} instead.
+   * 'setProperties' method name has been changed to 'set' for
+   * consistency across our various APIs.
+   */
+  @Deprecated
+  public void setProperties(Map<String, String> properties) {
+    set(properties);
+  }
 }

@@ -15,23 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
-
 
 /**
  * Connection Delegate interface
- * 
  */
 public interface ConnectionDelegate {
-	
-	
-	/**
-	 * Callback method for completed HttpURLConnections of KISSmetrics API queries  
-	 * 
-	 * @param urlString URL encoded API query string of the completed connection.
-	 * @param success  True for acceptable query response codes.
-	 * @param malformed  True if the provided query string was malformed.
-	 */
-	void connectionComplete(String urlString, boolean success, boolean malformed);
+  /**
+   * Callback method for completed HttpURLConnections of KISSmetrics API queries
+   *
+   * @param urlString URL encoded API query string of the completed connection.
+   * @param success   True for acceptable query response codes.
+   * @param malformed True if the provided query string was malformed.
+   */
+  void connectionComplete(String urlString, boolean success, boolean malformed);
 }

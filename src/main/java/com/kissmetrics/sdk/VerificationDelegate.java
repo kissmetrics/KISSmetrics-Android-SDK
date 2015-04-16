@@ -15,23 +15,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
-
 
 /**
  * Verification Delegate interface
- * 
  */
 interface VerificationDelegate {
-	/**
-	 * Callback method for completed HttpURLConnections for KISSmetrics verification queries
-	 *  
-	 * @param success  True for acceptable query response codes.
-	 * @param doTrack  True of the tracking is allowed for the provided KM Product key. 
-	 * @param baseUrl  Tracking endpoint URL
-	 * @param expirationDate  Unix timestamp in milliseconds from now.
-	 */
-	void verificationComplete(final boolean success, final boolean doTrack, 
-							  final String baseUrl, final long expirationDate);
+  /**
+   * Callback method for completed HttpURLConnections for KISSmetrics verification queries
+   *
+   * @param success        True for acceptable query response codes.
+   * @param doTrack        True of the tracking is allowed for the provided KM Product key.
+   * @param baseUrl        Tracking endpoint URL
+   * @param expirationDate Unix timestamp in milliseconds from now.
+   */
+  void verificationComplete(boolean success,
+                            boolean doTrack,
+                            String baseUrl,
+                            long expirationDate);
 }

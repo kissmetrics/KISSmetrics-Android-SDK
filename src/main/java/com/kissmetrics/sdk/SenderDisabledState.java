@@ -15,30 +15,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 public class SenderDisabledState implements SenderState {
-	
-	Sender sender;
-	
-	public SenderDisabledState(Sender sender) {
-		this.sender = sender;
-	}
-	
-	public void startSending() {
-		// Ignored. Sending is disabled.
-	}
-	
-	public void disableSending() {
-		// Ignored. Already in disabled state;
-	}
-	
-	public void enableSending() {
-		sender.setState(sender.getReadyState());
-	}
-	
-	public void connectionComplete(String urlString, boolean success, boolean malformed) {
-		// Ignored, the queue should already be emptied as a result of switching to a disabled state.
-	}
+  private Sender sender;
+
+  public SenderDisabledState(Sender sender) {
+    this.sender = sender;
+  }
+
+  public void startSending() {
+    // Ignored. Sending is disabled.
+  }
+
+  public void disableSending() {
+    // Ignored. Already in disabled state;
+  }
+
+  public void enableSending() {
+    sender.setState(sender.getReadyState());
+  }
+
+  public void connectionComplete(String urlString, boolean success, boolean malformed) {
+    // Ignored, the queue should already be emptied as a result of switching to a disabled state.
+  }
 }
