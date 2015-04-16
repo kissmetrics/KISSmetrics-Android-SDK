@@ -16,7 +16,6 @@
 // limitations under the License.
 
 
-
 package com.kissmetrics.sdk;
 
 import org.apache.cactus.mock.MockHttpURLConnection;
@@ -32,7 +31,6 @@ import android.test.ActivityTestCase;
 import android.util.Log;
 
 
-
 // Class under test
 
 //Class test helpers
@@ -43,144 +41,129 @@ import com.kissmetrics.sdk.TestableConnectionImpl;
 // ConnectionImplTest
 // implements ConnectionDelegate to test delegate callback results
 public class ConnectionImplTest extends ActivityTestCase implements ConnectionDelegate {
-	
-	URL testUrl = null;
-	MockHttpURLConnection mockConnection = null;
-	
-	String  resultUrl = null;
-	boolean resultSuccess = false;
-	boolean resultMalformed = false;
-	
+  URL testUrl = null;
+  MockHttpURLConnection mockConnection = null;
 
-	@Before
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		try {
-			testUrl = new URL("http://www.kissmetrics.com/"); // <- Not special url required, just needs to be valid.
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} 
-		
-		mockConnection = new MockHttpURLConnection(testUrl);
-		mockConnection.setExpectedGetInputStream(new ByteArrayInputStream("".getBytes()));//<- Not used but required for mock, so empty 
-	}
-	
-	
-	@After
-	protected void tearDown() throws Exception {
-		
-		super.tearDown();
-	}
+  String resultUrl = null;
+  boolean resultSuccess = false;
+  boolean resultMalformed = false;
 
-	
-	public final void testConnectionResponseHeader200() {
 
-		// Since we're testing the value of a local bool, 
-		// set it to the incorrect value before we test.
-		resultSuccess = false;
-		resultMalformed = true;
-		
-		mockConnection.setExpectedGetHeaderField("HTTP/1.1 200 OK");
+  @Before
+  protected void setUp() throws Exception {
+    super.setUp();
 
-		// Inject the mock connection via setter in our class override
-		TestableConnectionImpl connectionImpl = new TestableConnectionImpl();
-		connectionImpl.setHttpURLConnection(mockConnection);
+    try {
+      testUrl = new URL("http://www.kissmetrics.com/"); // <- Not special url required, just needs to be valid.
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
 
-		// Method under test
-		connectionImpl.sendRecord("http://www.kissmetrics.com", this);
+    mockConnection = new MockHttpURLConnection(testUrl);
+    mockConnection.setExpectedGetInputStream(new ByteArrayInputStream("".getBytes()));//<- Not used but required for mock, so empty
+  }
 
-		// Assert values returned via callback
-		assertEquals("A 200 response is reported as successful", true, resultSuccess);
-		assertEquals("A 200 response is not malformed", false, resultMalformed);
-	}
-	
-	
-	public final void testConnectionResponseHeader304() {
+  @After
+  protected void tearDown() throws Exception {
+    super.tearDown();
+  }
 
-		resultSuccess = false;
-		resultMalformed = true;
+  public final void testConnectionResponseHeader200() {
+    // Since we're testing the value of a local bool,
+    // set it to the incorrect value before we test.
+    resultSuccess = false;
+    resultMalformed = true;
 
-		mockConnection.setExpectedGetHeaderField("HTTP/1.1 304 Not Modified");
+    mockConnection.setExpectedGetHeaderField("HTTP/1.1 200 OK");
 
-		TestableConnectionImpl connectionImpl = new TestableConnectionImpl();
-		connectionImpl.setHttpURLConnection(mockConnection);
+    // Inject the mock connection via setter in our class override
+    TestableConnectionImpl connectionImpl = new TestableConnectionImpl();
+    connectionImpl.setHttpURLConnection(mockConnection);
 
-		// Method under test
-		connectionImpl.sendRecord("http://www.kissmetrics.com", this);
+    // Method under test
+    connectionImpl.sendRecord("http://www.kissmetrics.com", this);
 
-		// Assert values returned via callback
-		assertEquals("A 304 response is reported as successful", true, resultSuccess);
-		assertEquals("A 304 response is not malformed", false, resultMalformed);
-	}
-	
-	
-	public final void testConnectionResponseHeader404() {
+    // Assert values returned via callback
+    assertEquals("A 200 response is reported as successful", true, resultSuccess);
+    assertEquals("A 200 response is not malformed", false, resultMalformed);
+  }
 
-		resultSuccess = true;
-		resultMalformed = true;
+  public final void testConnectionResponseHeader304() {
+    resultSuccess = false;
+    resultMalformed = true;
 
-		mockConnection.setExpectedGetHeaderField("HTTP/1.1 404 Not Found");
+    mockConnection.setExpectedGetHeaderField("HTTP/1.1 304 Not Modified");
 
-		TestableConnectionImpl connectionImpl = new TestableConnectionImpl();
-		connectionImpl.setHttpURLConnection(mockConnection);
+    TestableConnectionImpl connectionImpl = new TestableConnectionImpl();
+    connectionImpl.setHttpURLConnection(mockConnection);
 
-		// Method under test
-		connectionImpl.sendRecord("http://www.kissmetrics.com", this);
+    // Method under test
+    connectionImpl.sendRecord("http://www.kissmetrics.com", this);
 
-		// Assert values returned via callback
-		assertEquals("A 404 response is reported as unsuccessful", false, resultSuccess);
-		assertEquals("A 404 response is not malformed", false, resultMalformed);
-	}
-	
-	
-	public final void testConnectionResponseHeader503() {
+    // Assert values returned via callback
+    assertEquals("A 304 response is reported as successful", true, resultSuccess);
+    assertEquals("A 304 response is not malformed", false, resultMalformed);
+  }
 
-		resultSuccess = true;
-		resultMalformed = true;
-		
-		mockConnection.setExpectedGetHeaderField("HTTP/1.1 503 Service Unavailable");
+  public final void testConnectionResponseHeader404() {
+    resultSuccess = true;
+    resultMalformed = true;
 
-		TestableConnectionImpl connectionImpl = new TestableConnectionImpl();
-		connectionImpl.setHttpURLConnection(mockConnection);
+    mockConnection.setExpectedGetHeaderField("HTTP/1.1 404 Not Found");
 
-		// Method under test
-		connectionImpl.sendRecord("http://www.kissmetrics.com", this);
+    TestableConnectionImpl connectionImpl = new TestableConnectionImpl();
+    connectionImpl.setHttpURLConnection(mockConnection);
 
-		// Assert values returned via callback
-		assertEquals("A 503 response is reported as unsuccessful", false, resultSuccess);
-		assertEquals("A 503 response is not malformed", false, resultMalformed);
-	}
+    // Method under test
+    connectionImpl.sendRecord("http://www.kissmetrics.com", this);
 
-	
-	public final void testMalformedURL() {
+    // Assert values returned via callback
+    assertEquals("A 404 response is reported as unsuccessful", false, resultSuccess);
+    assertEquals("A 404 response is not malformed", false, resultMalformed);
+  }
 
-		resultSuccess = true;
-		resultMalformed = false;
-		
-		// No need to mock for malformedURL
-		ConnectionImpl connectionImpl = new ConnectionImpl();
+  public final void testConnectionResponseHeader503() {
+    resultSuccess = true;
+    resultMalformed = true;
 
-		// Method under test
-		connectionImpl.sendRecord("htt.p://www.kissmetrics.com", this);
+    mockConnection.setExpectedGetHeaderField("HTTP/1.1 503 Service Unavailable");
 
-		// Assert values returned via callback
-		assertEquals("A malformedURL is not successful", false, resultSuccess);
-		assertEquals("A malformedURL is malformed", true, resultMalformed);
-	}
+    TestableConnectionImpl connectionImpl = new TestableConnectionImpl();
+    connectionImpl.setHttpURLConnection(mockConnection);
 
-	
-	// ConnectionImpl uses a callback to return results.
-	// Pickup the completion callback here and record the results.
-	// We'll check these values as part of each test.
-	@Override
-	public void connectionComplete(String urlString, boolean success, boolean malformed) {
-		
-		Log.d("KISSmetricsAPI", "ConnectionImplTest as ConnectionDelegate received connectionComplete callback");
-		
-		// Set our results for testing
-		this.resultUrl = urlString;
-		this.resultSuccess = success;
-		this.resultMalformed = malformed;
-	}
+    // Method under test
+    connectionImpl.sendRecord("http://www.kissmetrics.com", this);
+
+    // Assert values returned via callback
+    assertEquals("A 503 response is reported as unsuccessful", false, resultSuccess);
+    assertEquals("A 503 response is not malformed", false, resultMalformed);
+  }
+
+  public final void testMalformedURL() {
+    resultSuccess = true;
+    resultMalformed = false;
+
+    // No need to mock for malformedURL
+    ConnectionImpl connectionImpl = new ConnectionImpl();
+
+    // Method under test
+    connectionImpl.sendRecord("htt.p://www.kissmetrics.com", this);
+
+    // Assert values returned via callback
+    assertEquals("A malformedURL is not successful", false, resultSuccess);
+    assertEquals("A malformedURL is malformed", true, resultMalformed);
+  }
+
+  // ConnectionImpl uses a callback to return results.
+  // Pickup the completion callback here and record the results.
+  // We'll check these values as part of each test.
+  @Override
+  public void connectionComplete(String urlString, boolean success, boolean malformed) {
+    Log.d("KISSmetricsAPI", "ConnectionImplTest as ConnectionDelegate received connectionComplete callback");
+
+    // Set our results for testing
+    this.resultUrl = urlString;
+    this.resultSuccess = success;
+    this.resultMalformed = malformed;
+  }
 }

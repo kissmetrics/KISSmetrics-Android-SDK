@@ -29,57 +29,52 @@
 
 package com.kissmetrics.sdk;
 
-import java.lang.reflect.Method; 
+import java.lang.reflect.Method;
+
 import android.content.Context;
 import android.test.AndroidTestCase;
 
 // Class under test
 import com.kissmetrics.sdk.ArchiverImpl;
 
-
 public class ArchiverImplTest extends AndroidTestCase {
-	
-	String key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-	
-	String reservedString = "!*'();:@&=+$,/?#[]";
-    String encodedReservedString = "%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D";
-    String unsafeString = "<>#%{}|\\^~` []";
-    String encodedUnsafeString = "%3C%3E%23%25%7B%7D%7C%5C%5E~%60%20%5B%5D";
-    String unreservedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~";
-    String encodedUnreservedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~";
-    
-    /**
-     * @return The {@link Context} of the test project.
-     */
-    private Context getTestContext() {
-        try {
-            Method getTestContext = ArchiverImplTest.class.getMethod("getTestContext");
-            return (Context) getTestContext.invoke(this);
-        }
-        catch (final Exception exception) {
-            exception.printStackTrace();
-            return null;
-        }
+  String key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+
+  String reservedString = "!*'();:@&=+$,/?#[]";
+  String encodedReservedString = "%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D";
+  String unsafeString = "<>#%{}|\\^~` []";
+  String encodedUnsafeString = "%3C%3E%23%25%7B%7D%7C%5C%5E~%60%20%5B%5D";
+  String unreservedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~";
+  String encodedUnreservedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~";
+
+  /**
+   * @return The {@link Context} of the test project.
+   */
+  private Context getTestContext() {
+    try {
+      Method getTestContext = ArchiverImplTest.class.getMethod("getTestContext");
+      return (Context) getTestContext.invoke(this);
+    } catch (final Exception exception) {
+      exception.printStackTrace();
+      return null;
     }
-    
-    
-    @Override
-    protected void setUp() throws Exception {
-      super.setUp();
-      
-      // We must initialize the Archiver with product key and 
-      // context before the sharedArchiver() instance getter
-      ArchiverImpl.sharedArchiver(key, getTestContext());
+  }
 
-    } // end of setUp() method definition
-    
-    
-	public void testArchiverSharedArchiverReturnsSameInstance() {
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
 
-		ArchiverImpl arch1 = ArchiverImpl.sharedArchiver();
-		ArchiverImpl arch2 = ArchiverImpl.sharedArchiver();
-		
-		assertEquals("Expected ArchiverImpl.sharedArchiver returns the same instance", arch1, arch2);
-	}
-	
+    // We must initialize the Archiver with product key and
+    // context before the sharedArchiver() instance getter
+    ArchiverImpl.sharedArchiver(key, getTestContext());
+
+  }
+
+  public void testArchiverSharedArchiverReturnsSameInstance() {
+    ArchiverImpl arch1 = ArchiverImpl.sharedArchiver();
+    ArchiverImpl arch2 = ArchiverImpl.sharedArchiver();
+
+    assertEquals("Expected ArchiverImpl.sharedArchiver returns the same instance", arch1, arch2);
+  }
+
 }

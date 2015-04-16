@@ -18,19 +18,19 @@
 package com.kissmetrics.sdk;
 
 public interface SenderState extends ConnectionDelegate {
-	/**
-	 * Switches to sendingState and starts sending from 
-	 * the top of the send queue if appropriate.
-	 */
-	void startSending();
-	
-	/**
-	 * Switches to the disabled state if appropriate
-	 */
-	void disableSending();
-	
-	/**
-	 * Switches to an enabled state if appropriate
-	 */
-	void enableSending();
+  /**
+   * Switches to sendingState and starts sending from
+   * the top of the send queue if appropriate.
+   */
+  void startSending();
+
+  /**
+   * Switches to the disabled state if appropriate
+   */
+  void disableSending();
+
+  /**
+   * Switches to an enabled state if appropriate
+   */
+  void enableSending();
 }

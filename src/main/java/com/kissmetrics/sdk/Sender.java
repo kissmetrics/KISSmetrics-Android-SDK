@@ -20,79 +20,79 @@ package com.kissmetrics.sdk;
 import java.util.concurrent.ExecutorService;
 
 public class Sender implements ConnectionDelegate {
-	SenderState state;
-	ExecutorService executorService;
-	ConnectionImpl injectedConnection;
-	
-	private SenderState readyState;
-	private SenderState sendingState;
-	private SenderState disabledState;
+  SenderState state;
+  ExecutorService executorService;
+  ConnectionImpl injectedConnection;
 
-	/*
-	 * Sender constructor
-	 * 
-	 * @param disabled
-	 * 			Used to determine initialized state.
-	 */
-	public Sender(boolean disabled) {
-		readyState = new SenderReadyState(this);
-		sendingState = new SenderSendingState(this);
-		disabledState = new SenderDisabledState(this);
-		
-		if (disabled) {
-			state = disabledState;
-		} else {
-			state = readyState;
-		}
-	}
+  private SenderState readyState;
+  private SenderState sendingState;
+  private SenderState disabledState;
 
-	// Allow use of injectedConnection over new()
-	ConnectionImpl getNewConnection() {
-		if (injectedConnection != null) {
-			return injectedConnection;
-		}
-		return new ConnectionImpl();
-	}
+  /*
+   * Sender constructor
+   *
+   * @param disabled
+   * 			Used to determine initialized state.
+   */
+  public Sender(boolean disabled) {
+    readyState = new SenderReadyState(this);
+    sendingState = new SenderSendingState(this);
+    disabledState = new SenderDisabledState(this);
 
-	SenderState getReadyState() {
-		return readyState;
-	}
-	
-	SenderState getSendingState() {
-		return sendingState;
-	}
-	
-	SenderState getDisabledState() {
-		return disabledState;
-	}
+    if (disabled) {
+      state = disabledState;
+    } else {
+      state = readyState;
+    }
+  }
 
-	void setState(SenderState state) {
-		this.state = state;
-	}
+  // Allow use of injectedConnection over new()
+  ConnectionImpl getNewConnection() {
+    if (injectedConnection != null) {
+      return injectedConnection;
+    }
+    return new ConnectionImpl();
+  }
+
+  SenderState getReadyState() {
+    return readyState;
+  }
+
+  SenderState getSendingState() {
+    return sendingState;
+  }
+
+  SenderState getDisabledState() {
+    return disabledState;
+  }
+
+  void setState(SenderState state) {
+    this.state = state;
+  }
 
   // Forwarded methods
-	public void startSending() {
-		synchronized (this) {
-			state.startSending();
-		}
-	}
-	
-	public void disableSending() {
-		synchronized (this) {
-			state.disableSending();
-		}
-	}
-	
-	public void enableSending() {
-		synchronized (this) {
-			state.enableSending();
-		}
-	}
-	
-	// ConnectionDelegate method
-	public void connectionComplete(String urlString, boolean success, boolean malformed) {
-		synchronized (this) {
-			state.connectionComplete(urlString, success, malformed);
-		}
-	}
+  public void startSending() {
+    synchronized (this) {
+      state.startSending();
+    }
+  }
+
+  public void disableSending() {
+    synchronized (this) {
+      state.disableSending();
+    }
+  }
+
+  public void enableSending() {
+    synchronized (this) {
+      state.enableSending();
+    }
+  }
+
+  // ConnectionDelegate method
+  public void connectionComplete(String urlString, boolean success, boolean malformed) {
+    synchronized (this) {
+      state.connectionComplete(urlString, success, malformed);
+    }
+  }
 }

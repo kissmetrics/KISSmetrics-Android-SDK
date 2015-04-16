@@ -19,17 +19,16 @@ package com.kissmetrics.sdk;
 
 /**
  * Connection interface
- * 
  */
 interface Connection {
   public static final String USER_AGENT = "KISSmetrics-Android/2.2.1";
-	
-	/**
-	 * Makes a request to the provided API query urlString.
-	 * Handles the response and notifies the provided ConnectionDelgate on completion.
-	 * 
-	 * @param urlString  URL encoded API query string
-	 * @delegate delegate Object implementing the ConnectionDelegate interface
-	 */
-	void sendRecord(String urlString, ConnectionDelegate delegate);
+
+  /**
+   * Makes a request to the provided API query urlString.
+   * Handles the response and notifies the provided ConnectionDelgate on completion.
+   *
+   * @param urlString URL encoded API query string
+   * @delegate delegate Object implementing the ConnectionDelegate interface
+   */
+  void sendRecord(String urlString, ConnectionDelegate delegate);
 }

@@ -23,35 +23,57 @@ import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
 
 /**
  * Archiver interface
- * 
  */
 public interface Archiver {
-	void archiveInstallUuid(String installUuid);
-	void archiveDoTrack(boolean doTrack);
-	void archiveDoSend(boolean doSend);
-	void archiveVerificationExpDate(long expDate);
-	void archiveHasGenericIdentity(boolean hasGenericIdentity);
-	void archiveAppVersion(String appVersion);
-	void archiveFirstIdentity(String identity);
-	void archiveEvent(String name, Map<String, String> properties, RecordCondition condition);
-	void archiveProperties(Map<String, String> properties);
-	void archiveDistinctProperty(String name, String value);
-	void archiveIdentity(String identity);
-	void archiveAlias(String alias, String identity);
-	
-	void clearSendQueue();
-	void clearSavedIdEvents();
-	void clearSavedProperties();
-	String getQueryString(int index);
-	void removeQueryString(int index);
-	int getQueueCount();
-	
-	String getInstallUuid();
-	long getVerificationExpDate();
-	String getBaseUrl();
-	String getIdentity();
-	String getAppVersion();
-	boolean hasGenericIdentity();
-	boolean getDoSend();
-	boolean getDoTrack();
+  void archiveInstallUuid(String installUuid);
+
+  void archiveDoTrack(boolean doTrack);
+
+  void archiveDoSend(boolean doSend);
+
+  void archiveVerificationExpDate(long expDate);
+
+  void archiveHasGenericIdentity(boolean hasGenericIdentity);
+
+  void archiveAppVersion(String appVersion);
+
+  void archiveFirstIdentity(String identity);
+
+  void archiveEvent(String name, Map<String, String> properties, RecordCondition condition);
+
+  void archiveProperties(Map<String, String> properties);
+
+  void archiveDistinctProperty(String name, String value);
+
+  void archiveIdentity(String identity);
+
+  void archiveAlias(String alias, String identity);
+
+  void clearSendQueue();
+
+  void clearSavedIdEvents();
+
+  void clearSavedProperties();
+
+  String getQueryString(int index);
+
+  void removeQueryString(int index);
+
+  int getQueueCount();
+
+  String getInstallUuid();
+
+  long getVerificationExpDate();
+
+  String getBaseUrl();
+
+  String getIdentity();
+
+  String getAppVersion();
+
+  boolean hasGenericIdentity();
+
+  boolean getDoSend();
+
+  boolean getDoTrack();
 }

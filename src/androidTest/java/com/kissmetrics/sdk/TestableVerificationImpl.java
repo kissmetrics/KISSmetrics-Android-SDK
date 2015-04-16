@@ -15,36 +15,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package com.kissmetrics.sdk;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import com.kissmetrics.sdk.VerificationImpl;
-
 import android.util.Log;
-
 
 //VerificationConnectionImpl
 //
 //Extends VerificationImpl to inject a mocked HttpURLConnection via method override.
 //
 final class TestableVerificationImpl extends VerificationImpl {
+  private HttpURLConnection _mockConnection;
 
-	private HttpURLConnection _mockConnection;
-	
-	public void setHttpURLConnection(HttpURLConnection connection) {
-		Log.d("KISSmetricsAPI", "TestableVerificationImpl - setHttpURLConnection:" + connection);
-		_mockConnection = connection;
-	}
-	
-	// Override createHttpURLConnection to inject our mock HttpURLConnection
-	@Override
-	protected HttpURLConnection createHttpURLConnection(URL url) 
-			throws IOException {
-		Log.d("KISSmetricsAPI", "TestableVerificationImpl - createHttpURLConnection");
-		return _mockConnection;
-	}
+  public void setHttpURLConnection(HttpURLConnection connection) {
+    Log.d("KISSmetricsAPI", "TestableVerificationImpl - setHttpURLConnection:" + connection);
+    _mockConnection = connection;
+  }
+
+  // Override createHttpURLConnection to inject our mock HttpURLConnection
+  @Override
+  protected HttpURLConnection createHttpURLConnection(URL url)
+          throws IOException {
+    Log.d("KISSmetricsAPI", "TestableVerificationImpl - createHttpURLConnection");
+    return _mockConnection;
+  }
 }
