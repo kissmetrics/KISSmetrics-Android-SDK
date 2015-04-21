@@ -22,8 +22,6 @@ import java.util.Map;
 import com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition;
 
 /**
- * TrackingRunnables non-tracking state
- * <p/>
  * Provides Runnable objects for non-tracking state.
  */
 public class TrackingRunnablesNonTrackingState implements TrackingRunnables {

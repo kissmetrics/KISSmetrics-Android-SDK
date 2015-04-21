@@ -68,3 +68,22 @@ android.libraryVariants.all { variant ->
   task.from variant.javaCompile.destinationDir
   artifacts.add('archives', task);
 }
+
+// This magic came from:
+// http://stackoverflow.com/questions/23297562/gradle-javadoc-and-android-documentation
+android.libraryVariants.all { variant ->
+  task("generate${variant.name.capitalize()}Javadoc", type: Javadoc) {
+    title = "KISSmetrics Android API ${android.defaultConfig.versionName}"
+    description = 'Documentation for the KISSmetrics Android API'
+
+    source = variant.javaCompile.source
+    classpath = files(variant.javaCompile.classpath.files, project.android.getBootClasspath())
+    options {
+      links "http://docs.oracle.com/javase/7/docs/api/"
+      linksOffline "http://d.android.com/reference","${android.sdkDirectory}/docs/reference"
+    }
+    exclude '**/BuildConfig.java'
+    exclude '**/R.java'
+    exclude '**/doc-files/*'
+  }
+}

@@ -27,8 +27,6 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 
 /**
- * KISSmetricsAPI
- * <p/>
  * Public API for sending identities, events and properties to KISSmetrics from
  * Android applications. Compatible with Android 2.2+
  */
@@ -66,7 +64,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
   /**
    * Initializes the default Connection if not set. Allows for injection of
    * mock HttpURLConnection within VerificationImpl.
-   * <p/>
+   *
    * Returns the injected verificationImpl if it exists.
    *
    * @return Connection
@@ -405,7 +403,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
     }
   }
 
-  /**
+  /*
    * *********************************************
    * VerificationDelegateInterface methods
    * **********************************************
@@ -457,15 +455,16 @@ public final class KISSmetricsAPI implements VerificationDelegate {
    ************************************************/
 
   /**
+   * Initializes and/or returns the KISSmetricsAPI singleton
+   * instance.
+   *
    * @param apiKey  KISSmetrics product key
    * @param context Android application context
    * @param secure  !Ignored!
    * @return singleton instance of the KISSmeticsAPI
-   * @deprecated use {@link sharedAPI(String apiKey)} instead. All requests
+   *
+   * @deprecated use {@link #sharedAPI(String, android.content.Context)} instead. All requests
    * are now made over https. secure(boolean) is ignored.
-   * <p/>
-   * Initializes and/or returns the KISSmetricsAPI singleton
-   * instance.
    */
   @Deprecated
   public static synchronized KISSmetricsAPI sharedAPI(String apiKey,
@@ -478,13 +477,12 @@ public final class KISSmetricsAPI implements VerificationDelegate {
   }
 
   /**
+   * Records an event with optional properties.
+   *
    * @param name       Event name
    * @param properties Event properties or null
-   * @deprecated use {@link record(String name, Map<String, String>
-   * properties)} instead. 'recordEvent' method name has been
-   * changed to 'record' for consistency across our various APIs.
-   * <p/>
-   * Records an event with optional properties.
+   * @deprecated use {@link #record(String, java.util.Map)} instead. 'recordEvent' method name
+   * has been changed to 'record' for consistency across our various APIs.
    */
   @Deprecated
   public void recordEvent(String name, Map<String, String> properties) {
@@ -493,11 +491,10 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 
   /**
    * @param name Event name
-   * @deprecated use {@link record(String name, Map<String, String>
-   * properties), RecordCondition condition} instead. 'recordOnce'
-   * would only restrict the recording of events per identity. A
-   * more flexible solution was needed to allow recording of
-   * events once per installation or identity.
+   * @deprecated use {@link #record(String, java.util.Map, com.kissmetrics.sdk.KISSmetricsAPI.RecordCondition)}
+   * instead. 'recordOnce' would only restrict the recording of events per identity.  A
+   * more flexible solution was needed to allow recording of events once per installation or
+   * identity.
    */
   @Deprecated
   public void recordOnce(String name) {
@@ -507,9 +504,8 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 
   /**
    * @param properties User properties
-   * @deprecated use {@link set(Map<String, String> properties)} instead.
-   * 'setProperties' method name has been changed to 'set' for
-   * consistency across our various APIs.
+   * @deprecated use {@link #set(java.util.Map)} instead. <tt>setProperties</tt> method name
+   * has been changed to 'set' for consistency across our various APIs.
    */
   @Deprecated
   public void setProperties(Map<String, String> properties) {

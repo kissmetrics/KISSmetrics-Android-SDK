@@ -28,7 +28,7 @@ interface Connection {
    * Handles the response and notifies the provided ConnectionDelgate on completion.
    *
    * @param urlString URL encoded API query string
-   * @delegate delegate Object implementing the ConnectionDelegate interface
+   * @param delegate Object implementing the ConnectionDelegate interface
    */
   void sendRecord(String urlString, ConnectionDelegate delegate);
 }

@@ -33,8 +33,6 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 /**
- * ArchiverImpl
- * <p/>
  * Handles read/write of settings, identity, recorded events and properties.
  * Recorded events and properties are URL encoded before being saved to a send queue.
  */
@@ -408,7 +406,7 @@ public class ArchiverImpl implements Archiver {
    ************************************************/
 
   /**
-   * Archives install UUID to Settings > Internal Storage.
+   * Archives install UUID to Settings &lt; Internal Storage.
    *
    * @param installUuid Unique identifier of the application install which may only be
    *                    archived once.
@@ -430,7 +428,7 @@ public class ArchiverImpl implements Archiver {
   }
 
   /**
-   * Archives doTrack boolean to Settings > Internal Storage.
+   * Archives doTrack boolean to Settings &lt; Internal Storage.
    *
    * @param doTrack Setting to control recording of aliases, events and properties.
    */
@@ -442,7 +440,7 @@ public class ArchiverImpl implements Archiver {
   }
 
   /**
-   * Archives doSend boolean to Settings > Internal Storage.
+   * Archives doSend boolean to Settings &lt; Internal Storage.
    *
    * @param doSend Setting to control the uploading of aliases, events and properties.
    */
@@ -454,7 +452,7 @@ public class ArchiverImpl implements Archiver {
   }
 
   /**
-   * Archives baseUrl String to Settings > Internal Storage.
+   * Archives baseUrl String to Settings &lt; Internal Storage.
    *
    * @param baseUrl Setting for API base URL path
    */
@@ -472,7 +470,7 @@ public class ArchiverImpl implements Archiver {
   }
 
   /**
-   * Archives doTrack verification expiration date to Settings > Internal Storage.
+   * Archives doTrack verification expiration date to Settings &lt; Internal Storage.
    *
    * @param expDate Milliseconds from unix epoch when verification expires.
    */
@@ -484,7 +482,7 @@ public class ArchiverImpl implements Archiver {
   }
 
   /**
-   * Archives hasGenericIdentity boolean to Settings > Internal Storage.
+   * Archives hasGenericIdentity boolean to Settings &lt; Internal Storage.
    *
    * @param hasGenericIdentity setting to indicate that a proper identity has been given.
    */
@@ -495,7 +493,7 @@ public class ArchiverImpl implements Archiver {
   }
 
   /**
-   * Archives appVersion to Settings > Internal Storage.
+   * Archives appVersion to Settings &lt; Internal Storage.
    *
    * @param appVersion String app version name.
    */

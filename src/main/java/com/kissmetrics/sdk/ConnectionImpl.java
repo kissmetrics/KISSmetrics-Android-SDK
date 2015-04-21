@@ -26,8 +26,6 @@ import android.os.Build;
 import android.util.Log;
 
 /**
- * ConnectionImpl
- * <p/>
  * Handles HttpURLConnections for KISSmetrics API queries.
  */
 public class ConnectionImpl implements Connection {
@@ -52,7 +50,7 @@ public class ConnectionImpl implements Connection {
    * Handles the response and notifies the provided ConnectionDelgate on completion.
    *
    * @param urlString URL encoded API query string
-   * @delegate delegate Object implementing the ConnectionDelegate interface
+   * @param delegate Object implementing the ConnectionDelegate interface
    */
   public void sendRecord(String urlString, ConnectionDelegate delegate) {
     URL url = null;

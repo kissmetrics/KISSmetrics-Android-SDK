@@ -25,8 +25,6 @@ import java.util.Map;
 import android.util.Log;
 
 /**
- * QueryEncoder
- * <p/>
  * URL encoder for KISSmetricsAPI queries.
  */
 public class QueryEncoder {
@@ -51,7 +49,7 @@ public class QueryEncoder {
   }
 
   /**
-   * Checks provided properties HashMap for _d & _t timestamp keys.
+   * Checks provided properties HashMap for _d &amp; _t timestamp keys.
    *
    * @param properties HashMap of user or event properties
    * @return boolean  true if timestamp has been set in these properties
@@ -172,7 +170,7 @@ public class QueryEncoder {
    * @param name       Event name
    * @param properties Event properties
    * @param identity   User identity
-   * @param timestamp  A unix epoch timestamp to apply if _t & _d have not been set in properties
+   * @param timestamp  A unix epoch timestamp to apply if _t &amp; _d have not been set in properties
    * @return the URL encoded query string
    */
   public String createEventQuery(String name,
@@ -198,7 +196,7 @@ public class QueryEncoder {
    *
    * @param properties User properties
    * @param identity   User identity
-   * @param timestamp  A unix epoch timestamp to apply if _t & _d have not been set in properties
+   * @param timestamp  A unix epoch timestamp to apply if _t &amp; _d have not been set in properties
    * @return the URL encoded query string
    */
   public String createPropertiesQuery(Map<String, String> properties,
