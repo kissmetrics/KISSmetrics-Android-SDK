@@ -21,7 +21,7 @@ package com.kissmetrics.sdk;
  * Connection interface
  */
 interface Connection {
-  public static final String USER_AGENT = "KISSmetrics-Android/2.2.1";
+  public static final String USER_AGENT = "KISSmetrics-Android/2.2.2";
 
   /**
    * Makes a request to the provided API query urlString.
