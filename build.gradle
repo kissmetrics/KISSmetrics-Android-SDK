@@ -4,7 +4,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:1.1.0'
+    classpath 'com.android.tools.build:gradle:1.1.+'
   }
 }
 
@@ -17,8 +17,8 @@ android {
   defaultConfig {
     minSdkVersion 8
     targetSdkVersion 22
-    versionCode 2
-    versionName "2.2.1"
+    versionCode 3
+    versionName "2.2.2"
   }
 
   buildTypes {
@@ -55,7 +55,8 @@ task wrapper(type: org.gradle.api.tasks.wrapper.Wrapper) {
   gradleVersion = '2.3'
 }
 
-// Take from http://stackoverflow.com/questions/19307341/android-library-gradle-release-jar/19484146#19484146
+// Take from
+// http://stackoverflow.com/questions/19307341/android-library-gradle-release-jar/19484146#19484146
 android.libraryVariants.all { variant ->
   def name = variant.buildType.name
 
@@ -66,5 +67,33 @@ android.libraryVariants.all { variant ->
   def task = project.tasks.create "jar${name.capitalize()}", Jar
   task.dependsOn variant.javaCompile
   task.from variant.javaCompile.destinationDir
-  artifacts.add('archives', task);
+  artifacts.add('archives', task)
+}
+
+// This magic came from:
+// http://stackoverflow.com/questions/23297562/gradle-javadoc-and-android-documentation
+task javadocs(type: Javadoc) {
+  title = "KISSmetrics Android API ${android.defaultConfig.versionName}"
+  description = 'Documentation for the KISSmetrics Android API'
+
+  def variant = android.libraryVariants.release
+  source = android.sourceSets.main.java.srcDirs
+  classpath = files(variant.javaCompile.classpath.files, project.android.getBootClasspath())
+  options {
+    links "http://docs.oracle.com/javase/7/docs/api/"
+    linksOffline "http://d.android.com/reference","${android.sdkDirectory}/docs/reference"
+  }
+
+  exclude '**/BuildConfig.java'
+  exclude '**/R.java'
+}
+
+task sourcesJar(type: Jar) {
+  classifier 'sources'
+  from android.sourceSets.main.java.srcDirs
+}
+
+task javadocsJar(type: Jar, dependsOn: javadocs) {
+  classifier 'javadoc'
+  from "${project.buildDir}/docs/javadoc"
 }
