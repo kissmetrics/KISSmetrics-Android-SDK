@@ -55,3 +55,7 @@ tmp/
 # Intellij
 .idea/
 *.iml
+
+*.jar
+*.tar.gz
+*.tar.bz

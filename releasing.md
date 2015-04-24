@@ -28,6 +28,13 @@ The version number lives in:
 
 Get your changes into the `master` branch.  Then create a tag with the version:
 
+```sh
+git tag -a vX.Y.Z -m 'Version X.Y.Z'
+git push origin vX.Y.Z
+```
+
+Where `X.Y.Z` is your version number.
+
 ### 4. Build Artifacts
 
 You can build everything you need with this command line and Gradle 2.3+:
@@ -46,6 +53,8 @@ build/outputs/aar/KISSmetricsSDK-debug.aar
 build/outputs/aar/KISSmetricsSDK-release.aar
 ```
 
-### 5. Release
+### 5. Release to Github
 
-Create the Release on GitHub.
+Create the Release on GitHub.  You have to compress all the files in Step 4 since
+Github won't accept jar files.  Use the script `create-release-tar.sh` to build
+the file.  It will appear as `build/KISSmetricsSDK.tar.bz`.
