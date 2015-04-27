@@ -1,11 +1,16 @@
 buildscript {
   repositories {
     jcenter()
+    mavenCentral()
   }
 
   dependencies {
     classpath 'com.android.tools.build:gradle:1.1.+'
+    classpath 'com.github.dcendents:android-maven-plugin:1.2'
   }
+
+  version '2.2.2'
+  group 'com.kissmetrics.sdk'
 }
 
 apply plugin: 'com.android.library'
@@ -18,7 +23,7 @@ android {
     minSdkVersion 8
     targetSdkVersion 22
     versionCode 3
-    versionName "2.2.2"
+    versionName project.version
   }
 
   buildTypes {
@@ -46,6 +51,8 @@ android {
 repositories {
   jcenter()
 }
+
+apply plugin: "com.github.dcendents.android-maven"
 
 dependencies {
   androidTestCompile group: 'com.android.support.test', name: 'testing-support-lib', version: '+'
