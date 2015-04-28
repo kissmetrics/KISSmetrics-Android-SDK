@@ -9,6 +9,27 @@ For implementation details please see: http://support.kissmetrics.com/apis/andro
 
 API level 8. Android SDK 2.2.X
 
+## Using with Gradle
+
+The KISSmetricsSDK jar is in the JCenter repo.  To include it add the following to
+your `build.gradle`:
+
+```groovy
+dependencies {
+  compile 'com.kissmetrics.sdk:KISSmetricsSDK:2.2.2'
+}
+```
+
+If you don't already have `jcenter` in your `repositories` also include it:
+
+```groovy
+buildscript {
+  repositories {
+    jcenter()
+  }
+}
+```
+
 ## File organization
 
 Files are organized using the standard Android/Gradle file structure.  Code exists under
