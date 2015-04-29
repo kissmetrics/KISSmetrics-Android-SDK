@@ -23,6 +23,7 @@ The version number lives in:
 
   1. `Connection.java` under `com.kissmetrics.sdk`.  It's in the constant `USER_AGENT`
   2. `build.gradle` file at the root.
+  3. In the `README.md` file for the Gradle dependency
 
 ### 3. Merge and Tag
 
@@ -58,3 +59,19 @@ build/outputs/aar/KISSmetricsSDK-release.aar
 Create the Release on GitHub.  You have to compress all the files in Step 4 since
 Github won't accept jar files.  Use the script `create-release-tar.sh` to build
 the file.  It will appear as `build/KISSmetricsSDK.tar.bz`.
+
+### 6. Release on Bintray
+
+To get the Jar/Pom files into JCenter (central Gradle repository) you'll have
+to do a little more work.  First generate the pom file:
+
+```sh
+gradle install
+```
+
+The `KISSmetricsSDK-2.2.2.pom` file will be placed under
+`~/.m2/repository/com/kissmetrics/sdk/KISSmetricsSDK/$VERSION` where `$VERSION` is
+the new version number (i.e. 2.2.2).
+
+Create a new version of the package in Bintray.  Upload the files in Step 4 and
+`KISSmetricsSDK-2.2.2.pom` to Bintray.
