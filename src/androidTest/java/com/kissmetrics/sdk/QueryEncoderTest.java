@@ -31,7 +31,7 @@ public class QueryEncoderTest extends AndroidTestCase {
   static String key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
   static String clientType = "mobile_app";
   static String userAgent = "android+2.1.0";
-  static String baseUrl = "https://trk.kissmetrics.com";
+  static String baseUrl = "https://trc.kissmetrics.io";
 
   static String reservedString = "!*'();:@&=+$,/?#[]";
   static String encodedReservedString = "%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D";

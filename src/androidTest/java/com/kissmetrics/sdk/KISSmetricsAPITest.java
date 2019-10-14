@@ -105,7 +105,7 @@ public class KISSmetricsAPITest extends ActivityTestCase {
     URL url = null;
 
     try {
-      url = new URL("http://www.kissmetrics.com/"); // <- No specific URL required
+      url = new URL("https://www.kissmetrics.io/"); // <- No specific URL required
     } catch (MalformedURLException e) {
       e.printStackTrace();
     }
@@ -120,7 +120,7 @@ public class KISSmetricsAPITest extends ActivityTestCase {
   }
 
   private void mockResponse(String header) {
-    MockHttpURLConnection mockConnection = mockConnection("http://www.kissmetrics.com/", "", header, 0);
+    MockHttpURLConnection mockConnection = mockConnection("https://www.kissmetrics.io/", "", header, 0);
 
     TestableConnectionImpl testableConnectionImpl = new TestableConnectionImpl();
     testableConnectionImpl.setHttpURLConnection(mockConnection);
@@ -132,10 +132,10 @@ public class KISSmetricsAPITest extends ActivityTestCase {
   }
 
   private void mockVerificationResponse(String tracking) {
-    // Expected JSON payload = { "reason": "PRODUCT_SAMPLING", "tracking": false, "tracking_endpoint": "trk.kissmetrics.com"}
-    String mockJson = "{\"tracking\": " + tracking + ", \"tracking_endpoint\": \"trk.kissmetrics.com\" }";
+    // Expected JSON payload = { "reason": "PRODUCT_SAMPLING", "tracking": false, "tracking_endpoint": "trc.kissmetrics.io"}
+    String mockJson = "{\"tracking\": " + tracking + ", \"tracking_endpoint\": \"trc.kissmetrics.io\" }";
     long expDate = dateForNow().getTime() + 86400000;
-    MockHttpURLConnection mockConnection = mockConnection("http://www.kissmetrics.com/", mockJson, "HTTP/1.1 200 OK", expDate);
+    MockHttpURLConnection mockConnection = mockConnection("https://www.kissmetrics.io/", mockJson, "HTTP/1.1 200 OK", expDate);
 
     TestableVerificationImpl testableVerificationImpl = new TestableVerificationImpl();
     testableVerificationImpl.setHttpURLConnection(mockConnection);

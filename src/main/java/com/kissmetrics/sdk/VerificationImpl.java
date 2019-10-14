@@ -35,7 +35,7 @@ import android.util.Log;
  */
 class VerificationImpl {
   private static final Integer CONNECTION_TIMEOUT = 20;
-  private final String TRK_URL = "https://et.kissmetrics.com/m/trk";
+  private final String TRK_URL = "https://et.kissmetrics.io/m/trk";
 
   private HttpURLConnection connection;
 
@@ -109,7 +109,7 @@ class VerificationImpl {
           }
           br.close();
 
-          // Expected JSON payload = { "reason": "PRODUCT_SAMPLING", "tracking": false, "tracking_endpoint": "trk.kissmetrics.com"}
+          // Expected JSON payload = { "reason": "PRODUCT_SAMPLING", "tracking": false, "tracking_endpoint": "trc.kissmetrics.io"}
           String jsonString = sb.toString();
           JSONObject jsonObject = new JSONObject(jsonString);
           doTrack = jsonObject.getBoolean("tracking");
