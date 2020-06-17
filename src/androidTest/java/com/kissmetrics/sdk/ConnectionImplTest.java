@@ -54,7 +54,7 @@ public class ConnectionImplTest extends ActivityTestCase implements ConnectionDe
     super.setUp();
 
     try {
-      testUrl = new URL("http://www.kissmetrics.com/"); // <- Not special url required, just needs to be valid.
+      testUrl = new URL("https://www.kissmetrics.io/"); // <- Not special url required, just needs to be valid.
     } catch (MalformedURLException e) {
       e.printStackTrace();
     }
@@ -81,7 +81,7 @@ public class ConnectionImplTest extends ActivityTestCase implements ConnectionDe
     connectionImpl.setHttpURLConnection(mockConnection);
 
     // Method under test
-    connectionImpl.sendRecord("http://www.kissmetrics.com", this);
+    connectionImpl.sendRecord("https://www.kissmetrics.io", this);
 
     // Assert values returned via callback
     assertEquals("A 200 response is reported as successful", true, resultSuccess);
@@ -98,7 +98,7 @@ public class ConnectionImplTest extends ActivityTestCase implements ConnectionDe
     connectionImpl.setHttpURLConnection(mockConnection);
 
     // Method under test
-    connectionImpl.sendRecord("http://www.kissmetrics.com", this);
+    connectionImpl.sendRecord("https://www.kissmetrics.io", this);
 
     // Assert values returned via callback
     assertEquals("A 304 response is reported as successful", true, resultSuccess);
@@ -115,7 +115,7 @@ public class ConnectionImplTest extends ActivityTestCase implements ConnectionDe
     connectionImpl.setHttpURLConnection(mockConnection);
 
     // Method under test
-    connectionImpl.sendRecord("http://www.kissmetrics.com", this);
+    connectionImpl.sendRecord("https://www.kissmetrics.io", this);
 
     // Assert values returned via callback
     assertEquals("A 404 response is reported as unsuccessful", false, resultSuccess);
@@ -132,7 +132,7 @@ public class ConnectionImplTest extends ActivityTestCase implements ConnectionDe
     connectionImpl.setHttpURLConnection(mockConnection);
 
     // Method under test
-    connectionImpl.sendRecord("http://www.kissmetrics.com", this);
+    connectionImpl.sendRecord("https://www.kissmetrics.io", this);
 
     // Assert values returned via callback
     assertEquals("A 503 response is reported as unsuccessful", false, resultSuccess);
@@ -147,7 +147,7 @@ public class ConnectionImplTest extends ActivityTestCase implements ConnectionDe
     ConnectionImpl connectionImpl = new ConnectionImpl();
 
     // Method under test
-    connectionImpl.sendRecord("htt.p://www.kissmetrics.com", this);
+    connectionImpl.sendRecord("https://www.kissmetrics.io", this);
 
     // Assert values returned via callback
     assertEquals("A malformedURL is not successful", false, resultSuccess);

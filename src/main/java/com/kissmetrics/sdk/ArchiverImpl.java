@@ -55,7 +55,7 @@ public class ArchiverImpl implements Archiver {
   private static final boolean HAS_GENERIC_IDENTITY_DEFAULT = false;
   private static final boolean DO_TRACK_DEFAULT = true;
   private static final boolean DO_SEND_DEFAULT = false;
-  private static final String BASE_URL_DEFAULT = "https://trk.kissmetrics.com";
+  private static final String BASE_URL_DEFAULT = "https://trc.kissmetrics.io";
 
   private static ArchiverImpl sharedArchiver = null;
 

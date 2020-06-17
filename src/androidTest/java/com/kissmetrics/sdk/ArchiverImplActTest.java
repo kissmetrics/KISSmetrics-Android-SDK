@@ -479,7 +479,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
 
     // Define the expected default map
     HashMap<String, Object> expectedMap = new HashMap<String, Object>();
-    expectedMap.put("baseUrl", "https://trk.kissmetrics.com");
+    expectedMap.put("baseUrl", "https://trc.kissmetrics.io");
     expectedMap.put("verification_exp_date", 0L);
     expectedMap.put("hasGenericIdentity", false);
     expectedMap.put("doSend", false);
@@ -1178,7 +1178,7 @@ public class ArchiverImplActTest extends ActivityTestCase {
   public final void testArchiveData() {
 
     List<String> expectedSendQueue = this.uth_getSendQueue();
-    expectedSendQueue.add("https://trk.kissmetrics.com/a?_k=b8f68fe5004d29bcd21d3138b43ae755a16c12cf&_x=ios/2.0&_p=testnewuser%40example.com&_n=testolduser%40example.com");
+    expectedSendQueue.add("https://trc.kissmetrics.io/a?_k=b8f68fe5004d29bcd21d3138b43ae755a16c12cf&_x=ios/2.0&_p=testnewuser%40example.com&_n=testolduser%40example.com");
 
     this.uth_archiveSendQueue();
 

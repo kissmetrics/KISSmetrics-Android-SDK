@@ -77,7 +77,7 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
     resultDoTrack = true;
     resultBaseUrl = null;
 
-    String mockJson = "{\"reason\": \"PRODUCT_DISABLED\", \"tracking\": false, \"tracking_endpoint\": \"trk.kissmetrics.com\"}";
+    String mockJson = "{\"reason\": \"PRODUCT_DISABLED\", \"tracking\": false, \"tracking_endpoint\": \"trc.kissmetrics.io\"}";
     mockConnection.setExpectedGetInputStream(new ByteArrayInputStream(mockJson.getBytes()));
 
     mockConnection.setExpectedGetHeaderField("HTTP/1.1 404 Not Found");
@@ -106,7 +106,7 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
     resultBaseUrl = "";
     resultExpirationDate = 0L;
 
-    String mockJson = "{\"reason\": \"PRODUCT_DISABLED\", \"tracking\": false, \"tracking_endpoint\": \"trk.kissmetrics.com\"}";
+    String mockJson = "{\"reason\": \"PRODUCT_DISABLED\", \"tracking\": false, \"tracking_endpoint\": \"trc.kissmetrics.io\"}";
     mockConnection.setExpectedGetInputStream(new ByteArrayInputStream(mockJson.getBytes()));
 
     mockConnection.setExpectedGetHeaderField("HTTP/1.1 200 OK");
@@ -125,7 +125,7 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
     // Assert values returned via callback
     assertEquals("A 200 response is reported as successful", true, resultSuccess);
     assertEquals("A tracking:false JSON body set doTrack to false", false, resultDoTrack);
-    assertEquals("A successful response provides a baseUrl tracking endpoint", "https://trk.kissmetrics.com", resultBaseUrl);
+    assertEquals("A successful response provides a baseUrl tracking endpoint", "https://trc.kissmetrics.io", resultBaseUrl);
     assertEquals("A successful response sets an expiration at or less than 30 days", expectedExpirationDate, resultExpirationDate);
   }
 
@@ -137,7 +137,7 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
     resultBaseUrl = "";
     resultExpirationDate = 0L;
 
-    String mockJson = "{\"tracking\": true, \"tracking_endpoint\": \"trk.testing.kissmetrics.com\"}";
+    String mockJson = "{\"tracking\": true, \"tracking_endpoint\": \"trc.testing.kissmetrics.io\"}";
     mockConnection.setExpectedGetInputStream(new ByteArrayInputStream(mockJson.getBytes()));
 
     mockConnection.setExpectedGetHeaderField("HTTP/1.1 200 OK");
@@ -156,7 +156,7 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
     // Assert values returned via callback
     assertEquals("A 200 response is reported as successful", true, resultSuccess);
     assertEquals("A tracking:false JSON body set doTrack to true", true, resultDoTrack);
-    assertEquals("A successful response provides a baseUrl tracking endpoint", "https://trk.testing.kissmetrics.com", resultBaseUrl);
+    assertEquals("A successful response provides a baseUrl tracking endpoint", "https://trc.testing.kissmetrics.io", resultBaseUrl);
     assertEquals("Receives expected expiration from headers", expectedExpirationDate, resultExpirationDate);
   }
 
