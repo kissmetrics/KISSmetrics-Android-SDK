@@ -3,7 +3,7 @@
 This workspace is not the SDK. The KISSmetricsSDK project is intended to build the SDK as a jar.
 The source files included here are not intended to be used directly in your app.
 
-For implementation details please see: https://support.kissmetrics.io/article/show/android-sdk
+For implementation details please see: https://support.kissmetrics.io/reference#android
 
 ## Requirements
 
