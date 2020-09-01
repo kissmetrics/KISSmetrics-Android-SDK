@@ -160,24 +160,6 @@ public class VerificationImplTest extends ActivityTestCase implements Verificati
     assertEquals("Receives expected expiration from headers", expectedExpirationDate, resultExpirationDate);
   }
 
-  public final void testMalformedURL() {
-    resultSuccess = true;
-    resultDoTrack = false;
-    resultBaseUrl = "";
-    resultExpirationDate = 999999999L;
-
-    // No need to mock for malformedURL
-    VerificationImpl verificationImpl = new VerificationImpl();
-
-    // Method under test
-    verificationImpl.verifyTracking("://&%^#$^%#&*%^#", "INSTALLUUIDSHOULDNTMATTER", this);
-
-    // Assert values returned via callback
-    assertEquals("A malformedURL is not successful", false, resultSuccess);
-    assertEquals("A malformedURL does allow tracking", true, resultDoTrack);
-    assertEquals("A malformedURL sets expiration date to 0", 0L, resultExpirationDate);
-  }
-
   // VerificationImpl uses a callback to return results.
   // Pickup the completion callback here and record the results.
   // We'll check these values as part of each test.
