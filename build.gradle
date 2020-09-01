@@ -58,3 +58,29 @@ dependencies {
   testImplementation 'junit:junit:4.12'
 }
 
+// This magic came from:
+// http://stackoverflow.com/questions/23297562/gradle-javadoc-and-android-documentation
+task javadocs(type: Javadoc) {
+  android.libraryVariants.all { variant ->
+    title = "KISSmetrics Android API ${android.defaultConfig.versionName}"
+    source = android.sourceSets.main.java.srcDirs
+    classpath = files(variant.javaCompile.classpath.files, project.android.getBootClasspath())
+//    options {
+//      links "http://docs.oracle.com/javase/7/docs/api/"
+//      linksOffline "http://d.android.com/reference", "${android.sdkDirectory}/docs/reference"
+//    }
+
+    exclude '**/BuildConfig.java'
+    exclude '**/R.java'
+  }
+}
+
+task sourcesJar(type: Jar) {
+  classifier 'sources'
+  from android.sourceSets.main.java.srcDirs
+}
+
+task javadocsJar(type: Jar, dependsOn: javadocs) {
+  classifier 'javadoc'
+  from "${project.buildDir}/docs/javadoc"
+}

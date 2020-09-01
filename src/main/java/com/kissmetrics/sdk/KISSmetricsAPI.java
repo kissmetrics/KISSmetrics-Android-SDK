@@ -504,7 +504,7 @@ public final class KISSmetricsAPI implements VerificationDelegate {
 
   /**
    * @param properties User properties
-   * @deprecated use {@link #set(java.util.Map)} instead. <tt>setProperties</tt> method name
+   * @deprecated use {@link #set(java.util.Map)} instead. <code>setProperties</code> method name
    * has been changed to 'set' for consistency across our various APIs.
    */
   @Deprecated
