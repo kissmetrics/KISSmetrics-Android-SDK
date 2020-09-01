@@ -16,7 +16,7 @@ your `build.gradle`:
 
 ```groovy
 dependencies {
-  compile 'com.kissmetrics.sdk:KISSmetricsSDK:2.3.0'
+  compile 'com.kissmetrics.sdk:KISSmetricsSDK:2.3.1'
 }
 ```
 
