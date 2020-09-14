@@ -1,28 +1,36 @@
 buildscript {
   repositories {
+    google()
     jcenter()
     mavenCentral()
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:1.1.+'
-    classpath 'com.github.dcendents:android-maven-plugin:1.2'
+    classpath "com.android.tools.build:gradle:4.0.1"
+    classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
   }
 
-  version '2.3.0'
+  version '2.3.1'
   group 'com.kissmetrics.sdk'
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+
+allprojects {
+  repositories {
+    google()
+    jcenter()
+  }
+}
 
 android {
-  compileSdkVersion 8
-  buildToolsVersion "22.0.1"
+  compileSdkVersion 26
 
   defaultConfig {
     minSdkVersion 8
-    targetSdkVersion 22
-    versionCode 4
+    targetSdkVersion 26
+    versionCode 5
     versionName project.version
   }
 
@@ -48,18 +56,9 @@ android {
   }
 }
 
-repositories {
-  jcenter()
-}
-
-apply plugin: "com.github.dcendents.android-maven"
-
 dependencies {
-  androidTestCompile group: 'com.android.support.test', name: 'testing-support-lib', version: '+'
-}
-
-task wrapper(type: org.gradle.api.tasks.wrapper.Wrapper) {
-  gradleVersion = '2.3'
+  androidTestImplementation group: 'com.android.support.test', name: 'testing-support-lib', version: '0.1'
+  testImplementation 'junit:junit:4.12'
 }
 
 // Take from
@@ -80,19 +79,18 @@ android.libraryVariants.all { variant ->
 // This magic came from:
 // http://stackoverflow.com/questions/23297562/gradle-javadoc-and-android-documentation
 task javadocs(type: Javadoc) {
-  title = "KISSmetrics Android API ${android.defaultConfig.versionName}"
-  description = 'Documentation for the KISSmetrics Android API'
+  android.libraryVariants.all { variant ->
+    title = "KISSmetrics Android API ${android.defaultConfig.versionName}"
+    source = android.sourceSets.main.java.srcDirs
+    classpath = files(variant.javaCompile.classpath.files, project.android.getBootClasspath())
+//    options {
+//      links "http://docs.oracle.com/javase/7/docs/api/"
+//      linksOffline "http://d.android.com/reference", "${android.sdkDirectory}/docs/reference"
+//    }
 
-  def variant = android.libraryVariants.release
-  source = android.sourceSets.main.java.srcDirs
-  classpath = files(variant.javaCompile.classpath.files, project.android.getBootClasspath())
-  options {
-    links "http://docs.oracle.com/javase/7/docs/api/"
-    linksOffline "http://d.android.com/reference","${android.sdkDirectory}/docs/reference"
+    exclude '**/BuildConfig.java'
+    exclude '**/R.java'
   }
-
-  exclude '**/BuildConfig.java'
-  exclude '**/R.java'
 }
 
 task sourcesJar(type: Jar) {

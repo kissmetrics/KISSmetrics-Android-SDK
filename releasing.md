@@ -69,9 +69,9 @@ to do a little more work.  First generate the pom file:
 gradle install
 ```
 
-The `KISSmetricsSDK-2.3.0.pom` file will be placed under
+The `KISSmetricsSDK-2.3.1.pom` file will be placed under
 `~/.m2/repository/com/kissmetrics/sdk/KISSmetricsSDK/$VERSION` where `$VERSION` is
-the new version number (i.e. 2.3.0).
+the new version number (i.e. 2.3.1).
 
 Create a new version of the package in Bintray.  Upload the files in Step 4 and
-`KISSmetricsSDK-2.3.0.pom` to Bintray.
+`KISSmetricsSDK-2.3.1.pom` to Bintray.

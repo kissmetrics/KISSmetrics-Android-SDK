@@ -147,7 +147,7 @@ public class ConnectionImplTest extends ActivityTestCase implements ConnectionDe
     ConnectionImpl connectionImpl = new ConnectionImpl();
 
     // Method under test
-    connectionImpl.sendRecord("https://www.kissmetrics.io", this);
+    connectionImpl.sendRecord("htt.ps://www.kissmetrics.io", this);
 
     // Assert values returned via callback
     assertEquals("A malformedURL is not successful", false, resultSuccess);
