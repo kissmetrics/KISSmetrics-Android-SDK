@@ -60,4 +60,7 @@ tmp/
 *.tar.gz
 *.tar.bz
 
+# Allow the gradle wrapper to be stored by VCS
+!gradle/wrapper/gradle-wrapper.jar
+
 .DS_Store
